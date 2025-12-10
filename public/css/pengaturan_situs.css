@@ -1,0 +1,360 @@
+/* ====== Container Style ====== */
+/* ====== Container Style ====== */
+.container-fluid {
+    max-width: 100%;
+    width: 100%;
+    padding: 0 20px;
+}
+
+/* ====== Main Card Style ====== */
+.main-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.main-card-header {
+    padding: 20px 24px;
+    background: #ffffff;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.header-title {
+    margin: 0 0 16px 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+/* ====== Tab Container Inline (di dalam header) ====== */
+.tab-container-inline {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+.tab-link {
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #495057;
+    font-weight: 500;
+    font-size: 13px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+}
+
+.tab-link:hover {
+    background: #e9ecef;
+    color: #1a1a1a;
+    border-color: #dee2e6;
+}
+
+.tab-link.active {
+    background: #0d6efd;
+    color: #ffffff;
+    border-color: #0d6efd;
+    box-shadow: 0 2px 4px rgba(13, 110, 253, 0.3);
+}
+
+.main-card-body {
+    padding: 24px;
+}
+
+.main-card-footer {
+    padding: 20px 24px;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    text-align: right;
+}
+
+/* ====== Settings Card (Card untuk setiap section) ====== */
+.settings-card {
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+.settings-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.settings-card-header {
+    padding: 14px 18px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.settings-card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.settings-card-body {
+    padding: 20px;
+}
+
+/* ====== Sub Card (untuk nested sections seperti Filter, Reset, Export) ====== */
+.sub-card {
+    padding: 16px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    margin-top: 16px;
+}
+
+.sub-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #495057;
+    margin: 0 0 12px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+/* ====== Form Style ====== */
+.form-label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    color: #495057;
+    font-size: 13px;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    padding: 10px 14px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    color: #495057;
+    width: 100%;
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+    outline: none;
+}
+
+.form-control-color {
+    width: 80px;
+    height: 42px;
+    padding: 4px;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+/* ====== Color Input Group ====== */
+.color-input-group {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+/* ====== Grid System ====== */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -12px;
+}
+
+.col-md-4,
+.col-md-6 {
+    padding: 0 12px;
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .col-md-4 {
+        width: 33.333333%;
+    }
+    .col-md-6 {
+        width: 50%;
+    }
+}
+
+.g-3 {
+    gap: 12px;
+}
+
+/* ====== Button Preview Style ====== */
+#previewButton,
+#loginPreview,
+#orgPreview,
+#logoutPreview,
+#importPreview,
+#surveyPreview,
+#filterPreview,
+#resetPreviewBtn,
+#exportPreview,
+#tambahPreview {
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+/* ====== Reset Button Style ====== */
+.btn-reset {
+    padding: 10px 16px;
+    font-size: 13px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    color: #495057;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-reset:hover {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+    transform: translateY(-1px);
+}
+
+/* ====== Simpan Button ====== */
+.btn-success {
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 600;
+    font-size: 14px;
+    background: #198754;
+    border: none;
+    transition: all 0.2s ease;
+    color: #ffffff;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-success:hover {
+    background: #157347;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(25, 135, 84, 0.3);
+}
+
+.btn-success i {
+    font-size: 16px;
+}
+
+/* ====== Utilities ====== */
+.mt-2 {
+    margin-top: 8px;
+}
+
+.mt-3 {
+    margin-top: 16px;
+}
+
+.mt-4 {
+    margin-top: 24px;
+}
+
+.text-end {
+    text-align: right;
+}
+
+.text-muted {
+    color: #6c757d;
+    font-size: 12px;
+}
+
+/* ====== Input Number Style ====== */
+input[type="number"] {
+    appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    appearance: none;
+    margin: 0;
+}
+
+/* ====== Responsive Design ====== */
+@media (max-width: 992px) {
+    .tab-container-inline {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;
+    }
+}
+
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 0 12px;
+    }
+
+    .header-title {
+        font-size: 18px;
+    }
+
+    .tab-link {
+        font-size: 12px;
+        padding: 7px 12px;
+    }
+
+    .main-card-body {
+        padding: 16px;
+    }
+
+    .main-card-footer {
+        padding: 16px;
+    }
+
+    .settings-card-body {
+        padding: 16px;
+    }
+    
+    .form-control {
+        font-size: 13px;
+    }
+    
+    .btn-success {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 20px;
+    }
+
+    .col-md-4,
+    .col-md-6 {
+        width: 100%;
+        margin-bottom: 12px;
+    }
+
+    .settings-card-title {
+        font-size: 14px;
+    }
+
+    .sub-card {
+        padding: 12px;
+    }
+
+    .sub-card-title {
+        font-size: 13px;
+    }
+}
+
+/* ====== Small Text Helper ====== */
+small {
+    display: block;
+    margin-top: 6px;
+    color: #6c757d;
+    font-size: 12px;
+}   

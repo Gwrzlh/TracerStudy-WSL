@@ -1,0 +1,157 @@
+/* ===== KONTAK PAGE STYLES ===== */
+
+/* ===== Additional Utilities ===== */
+.overflow-x-auto {
+    overflow-x: auto;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+/* ===== Hover Effects ===== */
+tr:hover {
+    transition: background-color 0.2s ease;
+}
+
+/* ===== Focus Styles for Inputs ===== */
+input[type="checkbox"]:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* ===== Smooth Transitions ===== */
+button {
+    transition: all 0.2s ease;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* ===== Button Hapus Styling ===== */
+.btnDelete {
+    background-color: #ef4444;
+    color: #fff;
+    padding: 0.625rem 1.5rem;
+    border: none;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+.btnDelete:hover {
+    background-color: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(239, 68, 68, 0.25);
+}
+
+.btnDelete:active {
+    transform: translateY(0);
+}
+
+
+/* ===== Checkbox Enhanced Styles ===== */
+input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 2px solid #d1d5db;
+    cursor: pointer;
+    accent-color: #3b82f6;
+    transition: all 0.2s ease;
+}
+
+input[type="checkbox"]:hover {
+    border-color: #3b82f6;
+    transform: scale(1.1);
+}
+
+/* ===== Empty State Styling ===== */
+.empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.empty-state i {
+    color: #cbd5e1;
+    margin-bottom: 16px;
+}
+
+.empty-state p {
+    color: #64748b;
+    font-size: 14px;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* ===== Category Badge Styles ===== */
+.category-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: capitalize;
+    margin-right: 8px;
+}
+
+.category-surveyor {
+    background-color: #ede9fe;
+    color: #6d28d9;
+    border: 1px solid #c4b5fd;
+}
+
+.category-tim-tracer {
+    background-color: #fce7f3;
+    color: #be185d;
+    border: 1px solid #f9a8d4;
+}
+
+.category-wakil-direktur {
+    background-color: #e0f2fe;
+    color: #0369a1;
+    border: 1px solid #7dd3fc;
+}
+
+/* ===== Smooth Animations ===== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.contact-categories .card {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+    /* Hide some columns on mobile */
+    .table th:nth-child(6),
+    .table td:nth-child(6),
+    .table th:nth-child(7),
+    .table td:nth-child(7) {
+        display: none;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Hide more columns on very small screens */
+    .table th:nth-child(4),
+    .table td:nth-child(4),
+    .table th:nth-child(5),
+    .table td:nth-child(5) {
+        display: none;
+    }
+}
