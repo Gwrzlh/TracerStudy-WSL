@@ -129,26 +129,25 @@ $routes->group('admin', function($routes){
 $routes->group('admin/pengguna', ['filter' => 'adminAuth'], function ($routes) {
 
     // CRUD Pengguna
-    $routes->get('', 'admin\PenggunaController::index');
-    $routes->get('tambahPengguna', 'admin\PenggunaController::create');
-    $routes->post('tambahPengguna/post', 'admin\PenggunaController::store');
-    $routes->get('editPengguna/(:num)', 'admin\PenggunaController::edit/$1');
-    $routes->post('update/(:num)', 'admin\PenggunaController::update/$1');
+    $routes->get('', 'Admin\PenggunaController::index');
+    $routes->get('tambahPengguna', 'Admin\PenggunaController::create');
+    $routes->post('tambahPengguna/post', 'Admin\PenggunaController::store');
+    $routes->get('editPengguna/(:num)', 'Admin\PenggunaController::edit/$1');
+    $routes->post('update/(:num)', 'Admin\PenggunaController::update/$1');
     
     // Delete single & multiple
-    $routes->match(['post', 'delete'], 'delete/(:num)', 'admin\PenggunaController::delete/$1');
-    $routes->match(['post', 'delete'], 'deleteMultiple', 'admin\PenggunaController::deleteMultiple');
+    $routes->match(['post', 'delete'], 'delete/(:num)', 'Admin\PenggunaController::delete/$1');
+    $routes->match(['post', 'delete'], 'deleteMultiple', 'Admin\PenggunaController::deleteMultiple');
 
     // Export
-    $routes->post('exportSelected', 'admin\PenggunaController::exportSelected');
-
+    $routes->post('exportSelected', 'Admin\PenggunaController::exportSelected');
     // Error logs
-    $routes->get('errorLogs', 'admin\PenggunaController::errorLogs');
+    $routes->get('errorLogs', 'Admin\PenggunaController::errorLogs');
 
     // Import & Export akun (auth filter)
-    $routes->get('import', 'admin\ImportAccount::index', ['filter' => 'auth']);
-    $routes->post('import', 'admin\ImportAccount::import', ['filter' => 'auth']);
-    $routes->get('export', 'admin\ExportAccount::index', ['filter' => 'auth']);
+    $routes->get('import', 'Admin\ImportAccount::index', ['filter' => 'auth']);
+    $routes->post('import', 'Admin\ImportAccount::import', ['filter' => 'auth']);
+    $routes->get('export', 'Admin\ExportAccount::index', ['filter' => 'auth']);
 });
 
 
@@ -157,8 +156,8 @@ $routes->group('admin/pengguna', ['filter' => 'adminAuth'], function ($routes) {
 // AJAX / API ROUTES
 // ============================
 $routes->group('api', function ($routes) {
-    $routes->get('cities/province/(:num)', 'admin\PenggunaController::getCitiesByProvince/$1');
-    $routes->get('getProdiByJurusan/(:num)', 'admin\PenggunaController::getProdiByJurusan/$1');
+    $routes->get('cities/province/(:num)', 'Admin\PenggunaController::getCitiesByProvince/$1');
+    $routes->get('getProdiByJurusan/(:num)', 'Admin\PenggunaController::getProdiByJurusan/$1');
 });
 
 
@@ -182,7 +181,7 @@ $routes->group('admin/relasi-atasan-alumni', ['filter' => 'adminAuth'], function
 // =======================================
 // PROFIL ADMIN
 // =======================================
-$routes->group('admin/profil', ['filter' => 'auth'], function ($routes) {
+$routes->group('Admin/profil', ['filter' => 'auth'], function ($routes) {
     $routes->get('/', 'Admin\AdminController::profil');
 
     // Edit Data Profil
@@ -247,6 +246,28 @@ $routes->group('admin', ['filter' => 'adminAuth'], function ($routes) {
     $routes->get('emailtemplate', 'Admin\AdminEmailTemplateController::index');
     $routes->post('emailtemplate/update/(:num)', 'Admin\AdminEmailTemplateController::update/$1');
 
+    //Provinsi & Kota
+    // Provinsi & Kota (tambahkan ini di bawah // Email Template atau di mana saja dalam group admin)
+    $routes->group('provinces', function ($routes) {
+        $routes->get('/', 'Admin\ProvinciesController::index');  // /admin/provinces
+        $routes->get('create', 'Admin\ProvinciesController::create');  // /admin/provinces/create
+        $routes->post('store', 'Admin\ProvinciesController::store');  // POST /admin/provinces/store
+        $routes->get('edit/(:num)', 'Admin\ProvinciesController::edit/$1');  // GET /admin/provinces/edit/1
+        $routes->post('update/(:num)', 'Admin\ProvinciesController::update/$1');  // POST /admin/provinces/update/1
+        $routes->post('delete/(:num)', 'Admin\ProvinciesController::delete/$1');  // POST /admin/provinces/delete/1
+        $routes->get('cities/(:num)', 'Admin\ProvinciesController::getCitiesByProvince/$1');
+        $routes->get('(:num)',        'Admin\ProvinciesController::detail/$1'); 
+        
+        // GET /admin/provinces/cities/1 (untuk AJAX jika perlu nanti)
+
+        $routes->get('(:num)/cities/create', 'Admin\ProvinciesController::createCity/$1');
+        $routes->post('(:num)/cities/store',  'Admin\ProvinciesController::storeCity/$1');
+        $routes->get('(:num)/cities/edit/(:num)', 'Admin\ProvinciesController::editCity/$1/$2');
+        $routes->post('(:num)/cities/update/(:num)', 'Admin\ProvinciesController::updateCity/$1/$2');
+        $routes->post('(:num)/cities/delete/(:num)', 'Admin\ProvinciesController::deleteCity/$1/$2');
+
+    });
+
     // ===============================
     // Questionnaire / Kuesioner
     // ===============================
@@ -287,14 +308,14 @@ $routes->group('admin', ['filter' => 'adminAuth'], function ($routes) {
                 $routes->post('(:num)/duplicate', 'Kuesioner\SectionController::duplicate/$1/$2/$3');
 
                 // Questions per section
-                $routes->get('(:num)/questions', 'Kuesioner\QuestionnairController::manageSectionQuestions/$1/$2/$3');
-                $routes->get('(:num)/questions/get-op/(:num)', 'Kuesioner\QuestionnairController::getQuestionOptions/$1/$2/$3/$4');
-                $routes->get('(:num)/questions/get-conditions/(:num)', 'Kuesioner\QuestionnairController::getOption/$1/$2/$3/$4');
-                $routes->post('(:num)/questions/store', 'Kuesioner\QuestionnairController::storeSectionQuestion/$1/$2/$3');
-                $routes->get('(:num)/questions/get/(:num)', 'Kuesioner\QuestionnairController::getQuestion/$1/$2/$3/$4');
-                $routes->post('(:num)/questions/delete/(:num)', 'Kuesioner\QuestionnairController::deleteSectionQuestion/$1/$2/$3/$4');
-                $routes->post('(:num)/questions/(:num)/update', 'Kuesioner\QuestionnairController::updateQuestion/$1/$2/$3/$4');
-                $routes->post('(:num)/questions/duplicate/(:num)', 'Kuesioner\QuestionnairController::duplicate/$1/$2/$3/$4');
+                $routes->get('(:num)/questions', 'Kuesioner\QuestionnaireController::manageSectionQuestions/$1/$2/$3');
+                $routes->get('(:num)/questions/get-op/(:num)', 'Kuesioner\QuestionnaireController::getQuestionOptions/$1/$2/$3/$4');
+                $routes->get('(:num)/questions/get-conditions/(:num)', 'Kuesioner\QuestionnaireController::getOption/$1/$2/$3/$4');
+                $routes->post('(:num)/questions/store', 'Kuesioner\QuestionnaireController::storeSectionQuestion/$1/$2/$3');
+                $routes->get('(:num)/questions/get/(:num)', 'Kuesioner\QuestionnaireController::getQuestion/$1/$2/$3/$4');
+                $routes->post('(:num)/questions/delete/(:num)', 'Kuesioner\QuestionnaireController::deleteSectionQuestion/$1/$2/$3/$4');
+                $routes->post('(:num)/questions/(:num)/update', 'Kuesioner\QuestionnaireController::updateQuestion/$1/$2/$3/$4');
+                $routes->post('(:num)/questions/duplicate/(:num)', 'Kuesioner\QuestionnaireController::duplicate/$1/$2/$3/$4');
             });
         });
     });
@@ -544,7 +565,7 @@ $routes->group('atasan/kuesioner', ['filter' => 'atasanFilter'], function($route
 // AJAX Conditional Logic
 // =========================
 $routes->get('admin/get-conditional-options', 
-    'Kuesioner\QuestionnairController::getConditionalOptions',
+    'Kuesioner\QuestionnaireController::getConditionalOptions',
     ['as' => 'admin.questioner.getOptions']
 );
 
@@ -621,71 +642,71 @@ $routes->group('admin/respon', ['filter' => 'adminAuth'], function ($routes) {
 $routes->group('kaprodi', ['filter' => 'kaprodiAuth'], function ($routes) {
 
     // DASHBOARD & PROFIL
-    $routes->get('dashboard', 'kaprodi\KaprodiController::dashboard');
-    $routes->get('profil', 'kaprodi\KaprodiController::profil');
-    $routes->get('profil/edit', 'kaprodi\KaprodiController::editProfil');
-    $routes->post('profil/update', 'kaprodi\KaprodiController::updateProfil');
+    $routes->get('dashboard', 'Kaprodi\KaprodiController::dashboard');
+    $routes->get('profil', 'Kaprodi\KaprodiController::profil');
+    $routes->get('profil/edit', 'Kaprodi\KaprodiController::editProfil');
+    $routes->post('profil/update', 'Kaprodi\KaprodiController::updateProfil');
 
     // DELETE PERTANYAAN (HARUS DITARUH SEBELUM GROUP KUESIONER)
     $routes->get('questioner/delete/(:num)', 'kaprodi\KaprodiController::delete/$1');
 
     // MENU QUESTIONER
-    $routes->get('questioner', 'kaprodi\KaprodiController::questioner');
-    $routes->get('questioner/pertanyaan/(:num)', 'kaprodi\KaprodiController::pertanyaan/$1');
-    $routes->get('questioner/(:num)/download', 'kaprodi\KaprodiController::downloadPertanyaan/$1');
-    $routes->post('questioner/save_flags', 'kaprodi\KaprodiController::saveFlags');
-    $routes->post('questioner/addToAkreditasi', 'kaprodi\KaprodiController::addToAkreditasi');
-    $routes->post('questioner/addToAmi', 'kaprodi\KaprodiController::addToAmi');
+    $routes->get('questioner', 'Kaprodi\KaprodiController::questioner');
+    $routes->get('questioner/pertanyaan/(:num)', 'Kaprodi\KaprodiController::pertanyaan/$1');
+    $routes->get('questioner/(:num)/download', 'Kaprodi\KaprodiController::downloadPertanyaan/$1');
+    $routes->post('questioner/save_flags', 'Kaprodi\KaprodiController::saveFlags');
+    $routes->post('questioner/addToAkreditasi', 'Kaprodi\KaprodiController::addToAkreditasi');
+    $routes->post('questioner/addToAmi', 'Kaprodi\KaprodiController::addToAmi');
 
     // FETCH OPTIONS
-    $routes->get('kuesioner/pages/getQuestionOptions', 'kaprodi\KaprodiQuestionnairController::getQuestionOptions');
+    $routes->get('kuesioner/pages/getQuestionOptions', 'Kaprodi\KaprodiQuestionnairController::getQuestionOptions');
 
     // QUESTIONNAIRE GROUP
     $routes->group('kuesioner', function ($routes) {
 
         // CRUD Kuesioner
-        $routes->get('', 'kaprodi\KaprodiQuestionnairController::index');
-        $routes->get('create', 'kaprodi\KaprodiQuestionnairController::create');
-        $routes->post('store', 'kaprodi\KaprodiQuestionnairController::store');
-        $routes->get('(:num)', 'kaprodi\KaprodiQuestionnairController::show/$1');
-        $routes->get('(:num)/edit', 'kaprodi\KaprodiQuestionnairController::edit/$1');
-        $routes->post('(:num)/update', 'kaprodi\KaprodiQuestionnairController::update/$1');
-        $routes->get('(:num)/delete', 'kaprodi\KaprodiQuestionnairController::delete/$1');
+        $routes->get('', 'Kaprodi\KaprodiQuestionnairController::index');
+        $routes->get('create', 'Kaprodi\KaprodiQuestionnairController::create');
+        $routes->post('store', 'Kaprodi\KaprodiQuestionnairController::store');
+        $routes->get('(:num)', 'Kaprodi\KaprodiQuestionnairController::show/$1');
+        $routes->get('(:num)/edit', 'Kaprodi\KaprodiQuestionnairController::edit/$1');
+        $routes->post('(:num)/update', 'Kaprodi\KaprodiQuestionnairController::update/$1');
+        $routes->get('(:num)/delete', 'Kaprodi\KaprodiQuestionnairController::delete/$1');
 
         // PAGE
-        $routes->get('(:num)/pages', 'kaprodi\KaprodiPageController::index/$1');
-        $routes->get('(:num)/pages/create', 'kaprodi\KaprodiPageController::create/$1');
-        $routes->post('(:num)/pages/store', 'kaprodi\KaprodiPageController::store/$1');
-        $routes->get('(:num)/pages/(:num)/edit', 'kaprodi\KaprodiPageController::edit/$1/$2');
-        $routes->post('(:num)/pages/(:num)/update', 'kaprodi\KaprodiPageController::update/$1/$2');
+        $routes->get('(:num)/pages', 'Kaprodi\KaprodiPageController::index/$1');
+        $routes->get('(:num)/pages/create', 'Kaprodi\KaprodiPageController::create/$1');
+        $routes->post('(:num)/pages/store', 'Kaprodi\KaprodiPageController::store/$1');
+        $routes->get('(:num)/pages/(:num)/edit', 'Kaprodi\KaprodiPageController::edit/$1/$2');
+        $routes->post('(:num)/pages/(:num)/update', 'Kaprodi\KaprodiPageController::update/$1/$2');
 
         // SECTION
-        $routes->get('(:num)/pages/(:num)/sections', 'kaprodi\KaprodiSectionController::index/$1/$2');
-        $routes->get('(:num)/pages/(:num)/sections/create', 'kaprodi\KaprodiSectionController::create/$1/$2');
-        $routes->post('(:num)/pages/(:num)/sections/store', 'kaprodi\KaprodiSectionController::store/$1/$2');
-        $routes->get('(:num)/pages/(:num)/sections/(:num)/edit', 'kaprodi\KaprodiSectionController::edit/$1/$2/$3');
-        $routes->post('(:num)/pages/(:num)/sections/(:num)/update', 'kaprodi\KaprodiSectionController::update/$1/$2/$3');
+        $routes->get('(:num)/pages/(:num)/sections', 'Kaprodi\KaprodiSectionController::index/$1/$2');
+        $routes->get('(:num)/pages/(:num)/sections/create', 'Kaprodi\KaprodiSectionController::create/$1/$2');
+        $routes->post('(:num)/pages/(:num)/sections/store', 'Kaprodi\KaprodiSectionController::store/$1/$2');
+        $routes->get('(:num)/pages/(:num)/sections/(:num)/edit', 'Kaprodi\KaprodiSectionController::edit/$1/$2/$3');
+        $routes->post('(:num)/pages/(:num)/sections/(:num)/update', 'Kaprodi\KaprodiSectionController::update/$1/$2/$3');
 
         // QUESTIONS
-        $routes->get('(:num)/pages/(:num)/sections/(:num)/questions', 'kaprodi\KaprodiQuestionnairController::manageSectionQuestions/$1/$2/$3');
-        $routes->post('(:num)/pages/(:num)/sections/(:num)/questions/store', 'kaprodi\KaprodiQuestionnairController::storeSectionQuestion/$1/$2/$3');
-        $routes->get('(:num)/pages/(:num)/sections/(:num)/questions/(:num)', 'kaprodi\KaprodiQuestionnairController::getQuestion/$1/$2/$3/$4');
-        $routes->post('(:num)/pages/(:num)/sections/(:num)/questions/(:num)/update', 'kaprodi\KaprodiQuestionnairController::updateQuestion/$1/$2/$3/$4');
-        $routes->post('(:num)/pages/(:num)/sections/(:num)/questions/delete/(:num)', 'kaprodi\KaprodiQuestionnairController::deleteSectionQuestion/$1/$2/$3/$4');
-        $routes->post('(:num)/pages/(:num)/sections/(:num)/questions/(:num)/duplicate', 'kaprodi\KaprodiQuestionnairController::duplicate/$1/$2/$3/$4');
+        $routes->get('(:num)/pages/(:num)/sections/(:num)/questions', 'Kaprodi\KaprodiQuestionnairController::manageSectionQuestions/$1/$2/$3');
+        $routes->post('(:num)/pages/(:num)/sections/(:num)/questions/store', 'Kaprodi\KaprodiQuestionnairController::storeSectionQuestion/$1/$2/$3');
+        $routes->get('(:num)/pages/(:num)/sections/(:num)/questions/(:num)', 'Kaprodi\KaprodiQuestionnairController::getQuestion/$1/$2/$3/$4');
+        $routes->post('(:num)/pages/(:num)/sections/(:num)/questions/(:num)/update', 'Kaprodi\KaprodiQuestionnairController::updateQuestion/$1/$2/$3/$4');
+        $routes->post('(:num)/pages/(:num)/sections/(:num)/questions/delete/(:num)', 'Kaprodi\KaprodiQuestionnairController::deleteSectionQuestion/$1/$2/$3/$4');
+        $routes->post('(:num)/pages/(:num)/sections/(:num)/questions/(:num)/duplicate', 'Kaprodi\KaprodiQuestionnairController::duplicate/$1/$2/$3/$4');
     });
 
     // AKREDITASI (FIX NAMESPACE)
-    $routes->get('akreditasi', 'kaprodi\KaprodiController::akreditasi');
-    $routes->get('akreditasi/detail/(:any)', 'kaprodi\KaprodiController::detailAkreditasi/$1');
+    $routes->get('akreditasi', 'Kaprodi\KaprodiController::akreditasi');
+    $routes->get('akreditasi/detail/(:any)', 'Kaprodi\KaprodiController::detailAkreditasi/$1');
 
     // AMI
-    $routes->get('ami', 'kaprodi\KaprodiController::ami');
-    $routes->get('ami/detail/(:any)', 'kaprodi\KaprodiController::detailAmi/$1');
+    $routes->get('ami', 'Kaprodi\KaprodiController::ami');
+    $routes->get('ami/detail/(:any)', 'Kaprodi\KaprodiController::detailAmi/$1');
 
     // ALUMNI
-    $routes->get('alumni', 'kaprodi\KaprodiController::alumni');
-    $routes->get('alumni/export', 'kaprodi\KaprodiController::exportAlumni');
+    $routes->get('alumni', 'Kaprodi\KaprodiController::alumni');
+    $routes->get('alumni/export', 'Kaprodi\KaprodiController::exportAlumni');
 });
 
 

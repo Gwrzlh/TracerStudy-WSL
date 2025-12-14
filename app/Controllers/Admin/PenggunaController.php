@@ -28,124 +28,124 @@ use Exception;
 class PenggunaController extends BaseController
 {
    public function index()
-{
-    $accountModel = new \App\Models\User\Accounts();
-    $roleModel    = new \App\Models\User\Roles();
-    $alumniModel  = new \App\Models\User\DetailaccountAlumni();
-    $roles        = $roleModel->findAll();
+    {
+        $accountModel = new \App\Models\User\Accounts();
+        $roleModel    = new \App\Models\User\Roles();
+        $alumniModel  = new \App\Models\User\DetailaccountAlumni();
+        $roles        = $roleModel->findAll();
 
-    // 🔹 Ambil parameter filter
-    $roleId      = $this->request->getGet('role');
-    $keyword     = $this->request->getGet('keyword');
-    $angkatan    = $this->request->getGet('angkatan');
-    $tahunLulus  = $this->request->getGet('tahun_lulus');
+        // 🔹 Ambil parameter filter
+        $roleId      = $this->request->getGet('role');
+        $keyword     = $this->request->getGet('keyword');
+        $angkatan    = $this->request->getGet('angkatan');
+        $tahunLulus  = $this->request->getGet('tahun_lulus');
 
-    // 🔹 Ambil pagination
-    $perPage      = get_setting('pengguna_perpage_default', 5);
-    $currentPage  = (int) ($this->request->getVar('page') ?? 1);
-    $offset       = ($currentPage - 1) * $perPage;
+        // 🔹 Ambil pagination
+        $perPage      = get_setting('pengguna_perpage_default', 5);
+        $currentPage  = (int) ($this->request->getVar('page') ?? 1);
+        $offset       = ($currentPage - 1) * $perPage;
 
-    // 🔹 Build query utama
-    $builder = $accountModel->builder();
-    $builder->select('account.*, role.nama AS nama_role, da.angkatan, da.tahun_kelulusan')
-            ->join('role', 'role.id = account.id_role', 'left')
-            ->join('detailaccount_alumni da', 'da.id_account = account.id', 'left');
+        // 🔹 Build query utama
+        $builder = $accountModel->builder();
+        $builder->select('account.*, role.nama AS nama_role, da.angkatan, da.tahun_kelulusan')
+                ->join('role', 'role.id = account.id_role', 'left')
+                ->join('detailaccount_alumni da', 'da.id_account = account.id', 'left');
 
-    // 🔹 Filter Role
-    if (!empty($roleId) && is_numeric($roleId)) {
-        $builder->where('account.id_role', $roleId);
-    }
-
-    // 🔹 Filter Tahun Masuk (angkatan)
-    if (!empty($angkatan)) {
-        $builder->where('da.angkatan', $angkatan);
-    }
-
-    // 🔹 Filter Tahun Lulus
-    if (!empty($tahunLulus)) {
-        $builder->where('da.tahun_kelulusan', $tahunLulus);
-    }
-
-    // 🔹 Filter Keyword
-    if (!empty($keyword)) {
-        $roleName = '';
-        if (!empty($roleId)) {
-            $roleData = $roleModel->find($roleId);
-            $roleName = strtolower($roleData['nama'] ?? '');
+        // 🔹 Filter Role
+        if (!empty($roleId) && is_numeric($roleId)) {
+            $builder->where('account.id_role', $roleId);
         }
 
-        if ($roleName === 'alumni') {
-            $builder->groupStart()
-                ->like('da.nim', $keyword)
-                ->orLike('da.nama_lengkap', $keyword)
-                ->groupEnd();
-        } else {
-            $builder->groupStart()
-                ->like('account.username', $keyword)
-                ->orLike('account.email', $keyword)
-                ->orLike('account.status', $keyword)
-                ->orLike('role.nama', $keyword)
-                ->groupEnd();
+        // 🔹 Filter Tahun Masuk (angkatan)
+        if (!empty($angkatan)) {
+            $builder->where('da.angkatan', $angkatan);
         }
+
+        // 🔹 Filter Tahun Lulus
+        if (!empty($tahunLulus)) {
+            $builder->where('da.tahun_kelulusan', $tahunLulus);
+        }
+
+        // 🔹 Filter Keyword
+        if (!empty($keyword)) {
+            $roleName = '';
+            if (!empty($roleId)) {
+                $roleData = $roleModel->find($roleId);
+                $roleName = strtolower($roleData['nama'] ?? '');
+            }
+
+            if ($roleName === 'alumni') {
+                $builder->groupStart()
+                    ->like('da.nim', $keyword)
+                    ->orLike('da.nama_lengkap', $keyword)
+                    ->groupEnd();
+            } else {
+                $builder->groupStart()
+                    ->like('account.username', $keyword)
+                    ->orLike('account.email', $keyword)
+                    ->orLike('account.status', $keyword)
+                    ->orLike('role.nama', $keyword)
+                    ->groupEnd();
+            }
+        }
+
+        // 🔹 Urutkan terbaru
+        $builder->orderBy('account.id', 'DESC');
+
+        // 🔹 Hitung total data untuk pagination
+        $totalRecords = $builder->countAllResults(false);
+
+        // 🔹 Ambil data sesuai halaman
+        $accounts = $builder->limit($perPage, $offset)->get()->getResultArray();
+
+        // 🔹 Buat pagination
+        $pager = \Config\Services::pager();
+        $pagerLinks = $pager->makeLinks($currentPage, $perPage, $totalRecords, 'bootstrap5');
+
+        // 🔹 Hitung jumlah akun per role
+        $counts = [];
+        foreach ($roles as $r) {
+            $counts[$r['id']] = $accountModel->where('id_role', $r['id'])->countAllResults();
+            $accountModel->builder()->resetQuery();
+        }
+        $counts['all'] = $accountModel->countAllResults();
+
+        // 🔹 Ambil detail tambahan (opsional)
+        $detailaccountAdmin  = new \App\Models\User\DetailaccountAdmins();
+        $adminDetails = method_exists($detailaccountAdmin, 'getaccountid')
+            ? $detailaccountAdmin->getaccountid()
+            : [];
+
+        $alumniDetails = method_exists($alumniModel, 'getDetailWithRelations')
+            ? $alumniModel->getDetailWithRelations()
+            : [];
+
+        // 🔹 Ambil tahun unik dari database
+        $angkatanList   = $alumniModel->select('angkatan')->distinct()->orderBy('angkatan', 'DESC')->findAll();
+        $tahunLulusList = $alumniModel->select('tahun_kelulusan')->distinct()->orderBy('tahun_kelulusan', 'DESC')->findAll();
+
+        // 🔹 Kirim data ke view
+        $data = [
+            'roles'               => $roles,
+            'counts'              => $counts,
+            'accounts'            => $accounts,
+            'pager'               => $pager,
+            'pagerLinks'          => $pagerLinks,
+            'detailaccountAdmin'  => $adminDetails,
+            'detailaccountAlumni' => $alumniDetails,
+            'roleId'              => $roleId,
+            'keyword'             => $keyword,
+            'angkatan'            => $angkatan,
+            'tahunLulus'          => $tahunLulus,
+            'angkatanList'        => $angkatanList,
+            'tahunLulusList'      => $tahunLulusList,
+            'perPage'             => $perPage,
+            'currentPage'         => $currentPage,
+            'totalRecords'        => $totalRecords,
+        ];
+
+        return view('adminpage/pengguna/index', $data);
     }
-
-    // 🔹 Urutkan terbaru
-    $builder->orderBy('account.id', 'DESC');
-
-    // 🔹 Hitung total data untuk pagination
-    $totalRecords = $builder->countAllResults(false);
-
-    // 🔹 Ambil data sesuai halaman
-    $accounts = $builder->limit($perPage, $offset)->get()->getResultArray();
-
-    // 🔹 Buat pagination
-    $pager = \Config\Services::pager();
-    $pagerLinks = $pager->makeLinks($currentPage, $perPage, $totalRecords, 'bootstrap5');
-
-    // 🔹 Hitung jumlah akun per role
-    $counts = [];
-    foreach ($roles as $r) {
-        $counts[$r['id']] = $accountModel->where('id_role', $r['id'])->countAllResults();
-        $accountModel->builder()->resetQuery();
-    }
-    $counts['all'] = $accountModel->countAllResults();
-
-    // 🔹 Ambil detail tambahan (opsional)
-    $detailaccountAdmin  = new \App\Models\User\DetailaccountAdmins();
-    $adminDetails = method_exists($detailaccountAdmin, 'getaccountid')
-        ? $detailaccountAdmin->getaccountid()
-        : [];
-
-    $alumniDetails = method_exists($alumniModel, 'getDetailWithRelations')
-        ? $alumniModel->getDetailWithRelations()
-        : [];
-
-    // 🔹 Ambil tahun unik dari database
-    $angkatanList   = $alumniModel->select('angkatan')->distinct()->orderBy('angkatan', 'DESC')->findAll();
-    $tahunLulusList = $alumniModel->select('tahun_kelulusan')->distinct()->orderBy('tahun_kelulusan', 'DESC')->findAll();
-
-    // 🔹 Kirim data ke view
-    $data = [
-        'roles'               => $roles,
-        'counts'              => $counts,
-        'accounts'            => $accounts,
-        'pager'               => $pager,
-        'pagerLinks'          => $pagerLinks,
-        'detailaccountAdmin'  => $adminDetails,
-        'detailaccountAlumni' => $alumniDetails,
-        'roleId'              => $roleId,
-        'keyword'             => $keyword,
-        'angkatan'            => $angkatan,
-        'tahunLulus'          => $tahunLulus,
-        'angkatanList'        => $angkatanList,
-        'tahunLulusList'      => $tahunLulusList,
-        'perPage'             => $perPage,
-        'currentPage'         => $currentPage,
-        'totalRecords'        => $totalRecords,
-    ];
-
-    return view('adminpage/pengguna/index', $data);
-}
 
 
     public function create()
@@ -227,7 +227,7 @@ class PenggunaController extends BaseController
         ];
 
 
-        return view('adminpage\pengguna\tambahPengguna', $data);
+        return view('adminpage/pengguna/tambahPengguna', $data);
     }
 
     public function getCitiesByProvince($province_id)

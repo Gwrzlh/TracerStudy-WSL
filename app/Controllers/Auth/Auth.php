@@ -18,7 +18,7 @@ class Auth extends Controller
     public function login()
     {
         // Kirim default value biar tidak error
-        return view('login', [
+        return view('Login', [
             'server_logged_in' => session()->get('logged_in') ?? false, // konsisten pakai logged_in
             'via_cookie'       => false, // kalau kamu tidak pakai "ingat saya"
         ]);

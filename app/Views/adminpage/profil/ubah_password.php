@@ -8,7 +8,7 @@
 <div class="password-container">
   <h2>Ubah Password</h2>
 
-  <form method="post" action="<?= base_url('admin/profil/update-password') ?>" class="password-form">
+  <form method="post" action="<?= base_url('Admin/profil/update-password') ?>" class="password-form">
     <?= csrf_field() ?>
     <div class="form-group">
       <label>Password Lama</label>

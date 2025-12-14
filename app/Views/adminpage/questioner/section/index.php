@@ -82,9 +82,9 @@
                                                 <button class="btn-action btn-edit move-down-btn" title="Move Down" data-section-id="<?= $section['id'] ?>" style="margin: 0;">
                                                     <i class="fas fa-arrow-down"></i>
                                                 </button>
-                                                <a href="#" class="btn-action btn-duplicate" data-section-id="<?= $section['id'] ?>" title="Duplicate Section" style="margin: 0;">
-                                                    <i class="fas fa-copy"></i>
-                                                </a>
+                                                <button class="btn-action btn-duplicate" data-section-id="<?= $section['id'] ?>" title="Duplicate Section" style="margin: 0;">
+                                                     <i class="fas fa-copy"></i>
+                                                </button>
                                                 <a href="<?= base_url("admin/questionnaire/{$questionnaire_id}/pages/{$page_id}/sections/{$section['id']}/questions") ?>" 
                                                     class="btn-action btn-edit" title="Manage Questions" style="margin: 0;">
                                                     <i class="fas fa-cogs"></i>
@@ -158,6 +158,83 @@
                                 form.submit();
                             }
                         });
+                    });
+                });
+                $('.move-up-btn').on('click', function() {
+                    const sectionId = $(this).data('section-id');
+                    console.log('Move Up: section_id=' + sectionId); // Debug
+                    $.ajax({
+                        url: '<?= base_url("admin/questionnaire/{$questionnaire_id}/pages/{$page_id}/sections") ?>/' + sectionId + '/moveUp',
+                        type: 'POST',
+                        data: {
+                            section_id: sectionId,
+                            '<?= csrf_token() ?>': '<?= csrf_hash() ?>'
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            console.log('Move Up Response:', response);
+                            if (response.success) {
+                                window.location.reload();
+                            } else {
+                                alert('Gagal memindahkan section: ' + (response.message || 'Unknown error'));
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Move Up Error:', status, error, xhr.responseText);
+                            alert('Terjadi kesalahan saat memindahkan section: ' + xhr.responseText);
+                        }
+                    });
+                });
+
+                $('.move-down-btn').on('click', function() {
+                    const sectionId = $(this).data('section-id');
+                    console.log('Move Down: section_id=' + sectionId); // Debug
+                    $.ajax({
+                        url: '<?= base_url("admin/questionnaire/{$questionnaire_id}/pages/{$page_id}/sections") ?>/' + sectionId + '/moveDown',
+                        type: 'POST',
+                        data: {
+                            section_id: sectionId,
+                            '<?= csrf_token() ?>': '<?= csrf_hash() ?>'
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            console.log('Move Down Response:', response);
+                            if (response.success) {
+                                window.location.reload();
+                            } else {
+                                alert('Gagal memindahkan section: ' + (response.message || 'Unknown error'));
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Move Down Error:', status, error, xhr.responseText);
+                            alert('Terjadi kesalahan saat memindahkan section: ' + xhr.responseText);
+                        }
+                    });
+                });
+
+                $('.btn-duplicate').on('click', function() {
+                    const sectionId = $(this).data('section-id');
+                    console.log('duplicate: section_id=' + sectionId); // Debug
+                    $.ajax({
+                        url: '<?= base_url("admin/questionnaire/{$questionnaire_id}/pages/{$page_id}/sections") ?>/' + sectionId + '/duplicate',
+                        type: 'POST',
+                        data: {
+                            section_id: sectionId,
+                            '<?= csrf_token() ?>': '<?= csrf_hash() ?>'
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            console.log('Duplicate Response:', response);
+                            if (response.success) {
+                                window.location.reload();
+                            } else {
+                                alert('Gagal memindahkan section: ' + (response.message || 'Unknown error'));
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Duplicate Error:', status, error, xhr.responseText);
+                            alert('Terjadi kesalahan saat menduplikasi section: ' + xhr.responseText);
+                        }
                     });
                 });
             </script>

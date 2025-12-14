@@ -6,7 +6,7 @@ use App\Models\Kuesioner\ResponseAtasanModel;
 use App\Models\User\DetailaccountAlumni;
 use App\Models\User\Accounts;
 use App\Models\User\DetailaccountAtasan;
-use App\Models\Alumni\AtasanHelperModel;
+use App\Models\Alumni\AtasanhelperModel;
 use App\Models\Kuesioner\AnswerModel;
 USE App\Controllers\BaseController;
 

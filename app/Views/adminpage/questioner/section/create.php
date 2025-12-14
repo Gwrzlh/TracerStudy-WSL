@@ -182,7 +182,7 @@
                 }
 
                 $.ajax({
-                    url: "<?= base_url('admin/questionnaire/pages/getQuestionOptions') ?>",
+                    url: "<?= base_url('admin/questionnaire/pages/get-question-options') ?>",
                     type: 'GET',
                     data: { question_id: questionId },
                     dataType: 'json',

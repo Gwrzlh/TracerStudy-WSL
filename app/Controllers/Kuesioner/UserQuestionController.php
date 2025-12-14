@@ -8,7 +8,7 @@ use App\Models\User\DetailaccountAlumni;
 use App\Models\Kuesioner\QuestionnairModel;
 use App\Models\Kuesioner\QuestionnairePageModel;
 use App\Models\Kuesioner\QuestionnairConditionModel;
-use App\models\Support\LogActivityModel;
+use App\Models\Support\LogActivityModel;
 use App\Models\User\AccountModel;
 use App\Models\Organisasi\Jurusan;
 use App\Models\Organisasi\Prodi;

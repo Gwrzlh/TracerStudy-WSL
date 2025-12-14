@@ -2,7 +2,7 @@
 <?= $this->section('content') ?>
 
 <?php
-$answerModel = new \App\Models\AnswerModel();
+$answerModel = new \App\Models\Kuesioner\AnswerModel();
 $atasanId = session()->get('id_account');
 $q_id = $q_id; 
 ?>

@@ -148,13 +148,13 @@ $currentRoute = service('request')->uri->getPath();
         <details class="group" <?= (
           str_contains($currentRoute, 'pengaturan-situs') ||
           str_contains($currentRoute, 'admin/log_activities') ||
-          str_contains($currentRoute, 'admin/profil') ||
+          str_contains($currentRoute, 'Admin/profil') ||
           str_contains($currentRoute, 'pengaturan-dashboard')
         ) ? 'open' : '' ?>>
           <summary class="sidebar-link <?= (
             str_contains($currentRoute, 'pengaturan-situs') ||
             str_contains($currentRoute, 'admin/log_activities') ||
-            str_contains($currentRoute, 'admin/profil') ||
+            str_contains($currentRoute, 'Admin/profil') ||
             str_contains($currentRoute, 'pengaturan-dashboard')
           ) ? 'active' : '' ?>">
             <div class="flex items-center gap-2">
@@ -167,16 +167,21 @@ $currentRoute = service('request')->uri->getPath();
             <a href="<?= base_url('pengaturan-situs') ?>" class="submenu <?= str_contains($currentRoute, 'pengaturan-situs') ? 'active' : '' ?>">Pengaturan Situs</a>
             <a href="<?= base_url('admin/log_activities') ?>" class="submenu <?= str_contains($currentRoute, 'admin/log_activities') ? 'active' : '' ?>">Aktivitas Pengguna</a>
             <a href="<?= base_url('admin/log_activities/dashboard') ?>" class="submenu <?= str_contains($currentRoute, 'admin/log_activities/dashboard') ? 'active' : '' ?>">Log Dashboard</a>
-            <a href="<?= base_url('admin/profil') ?>" class="submenu <?= str_contains($currentRoute, 'admin/profil') ? 'active' : '' ?>">Profil</a>
+            <a href="<?= base_url('Admin/profil') ?>" class="submenu <?= str_contains($currentRoute, 'Admin/profil') ? 'active' : '' ?>">Profil</a>
             <a href="<?= base_url('pengaturan-dashboard/dashboard-alumni') ?>" class="submenu <?= str_contains($currentRoute, 'pengaturan-dashboard') ? 'active' : '' ?>">Pengaturan Dashboard</a>
           </div>
         </details>
         <!-- 🔔 Kirim Peringatan -->
-<a href="<?= base_url('admin/peringatan') ?>"
-   class="sidebar-link <?= str_contains($currentRoute, 'peringatan') ? 'active' : '' ?>">
-   <i class="fa-solid fa-bell"></i>
-   <span>Kirim Peringatan</span>
-</a>
+        <a href="<?= base_url('admin/peringatan') ?>"
+          class="sidebar-link <?= str_contains($currentRoute, 'peringatan') ? 'active' : '' ?>">
+          <i class="fa-solid fa-bell"></i>
+          <span>Kirim Peringatan</span>
+        </a>
+        <a href="<?= base_url('admin/provinces') ?>"
+          class="sidebar-link <?= str_contains($currentRoute, 'provinces') ? 'active' : '' ?>">
+          <i class="fa-solid fa-bell"></i>
+          <span>Manage data Provinsi & kota</span>
+        </a>
 
 
       </nav>

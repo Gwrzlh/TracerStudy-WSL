@@ -12,7 +12,7 @@
         </div>
     <?php endif ?>
 
-    <form action="<?= base_url('admin/profil/update/' . $admin['id']) ?>" method="post">
+    <form action="<?= base_url('Admin/profil/update/' . $admin['id']) ?>" method="post">
         <?= csrf_field() ?>
         
         <!-- Nama Lengkap -->
@@ -49,7 +49,7 @@
 
         <!-- Tombol -->
         <div class="flex justify-end gap-2">
-            <a href="<?= base_url('admin/profil') ?>" 
+            <a href="<?= base_url('Admin/profil') ?>" 
                class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">Batal</a>
             <button type="submit" 
                     class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Simpan</button>

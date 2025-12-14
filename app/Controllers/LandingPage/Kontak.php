@@ -2,7 +2,7 @@
 
 namespace App\Controllers\LandingPage;
 
-use App\Models\LandingPage\KontakModel;
+use App\Models\LandingPage\kontakmodel;
 use CodeIgniter\Controller;
 
 class Kontak extends Controller

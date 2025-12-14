@@ -5,7 +5,7 @@ namespace App\Controllers\Organisasi;
 use App\Controllers\BaseController;
 use CodeIgniter\HTTP\ResponseInterface;
 use App\Models\Organisasi\Tipeorganisasi;
-use App\models\User\Roles;
+use App\Models\User\Roles;
 use App\Models\Organisasi\TipeOrganisasiModel;
 
 class TipeOrganisasiController extends BaseController
@@ -14,7 +14,7 @@ public function index()
 {
     $perPage = $this->request->getGet('per_page') ?? 5; // default 5 data per halaman
 
-    $tipeorganisasi = new \App\Models\Organisasi\Tipeorganisasi();
+    $tipeorganisasi = new \App\Models\Organisasi\TipeOrganisasi();
 
     $data = [
         'Tipeorganisasi' => $tipeorganisasi->getgroupid()->paginate($perPage), // pagination
@@ -26,13 +26,13 @@ public function index()
 }
     public function create()
     {
-        $tipeorganisasi = new Tipeorganisasi();
+        $tipeorganisasi = new TipeOrganisasiModel();
         $roles = new Roles();
         $data = [
             'roles' => $roles->findAll()
         ];
 
-        return view('adminpage\organisasi\tipe_organisasi\tambah', $data);
+        return view('adminpage/organisasi/tipe_organisasi/tambah', $data);
     }
     public function store()
     {
@@ -52,7 +52,7 @@ public function index()
         'id_group'  => $this->request->getPost('group')
        ]);
 
-       $tipeModel = new Tipeorganisasi();
+       $tipeModel = new TipeOrganisasi();
        $tipeModel->insert($data);
 
       return redirect()->to('/admin/tipeorganisasi')->with('success', 'Data pengguna berhasil disimpan.');

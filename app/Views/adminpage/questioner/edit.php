@@ -111,16 +111,16 @@
                                 if (in_array($condition['field'], ['id_jurusan', 'id_prodi', 'angkatan', 'tahun_kelulusan', 'id_provinsi', 'role_id', 'jenisKelamin'])) {
                                     $input_type = 'select';
                                     if ($condition['field'] == 'id_jurusan') {
-                                        $model = new \App\Models\Jurusan();
+                                        $model = new \App\Models\Organisasi\Jurusan();
                                         $options = $model->select('id, nama_jurusan as name')->findAll();
                                     } elseif ($condition['field'] == 'id_prodi') {
-                                        $model = new \App\Models\Prodi();
+                                        $model = new \App\Models\Organisasi\Prodi();
                                         $options = $model->select('id, nama_prodi as name')->findAll();
                                     } elseif ($condition['field'] == 'id_provinsi') {
-                                        $model = new \App\Models\Provincies(); // Sesuaikan dengan model yang benar
+                                        $model = new \App\Models\Support\Provincies(); // Sesuaikan dengan model yang benar
                                         $options = $model->select('id, name')->findAll();
                                     } elseif ($condition['field'] == 'role_id') {
-                                        $model = new \App\Models\Roles();
+                                        $model = new \App\Models\User\Roles();
                                         $options = $model->select('id, nama as name')->findAll();
                                     } elseif ($condition['field'] == 'jenisKelamin') {
                                         $options = [['id' => 'Laki-Laki', 'name' => 'Laki-Laki'], ['id' => 'Perempuan', 'name' => 'Perempuan']];

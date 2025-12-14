@@ -54,8 +54,8 @@
       <p><strong>Diupdate :</strong> <?= esc($admin['updated_at'] ?? '-') ?></p>
 
       <div class="profile-actions">
-        <a href="<?= base_url('admin/profil/edit/' . session()->get('id_account')) ?>" class="btn-edit">Edit Profil</a>
-        <a href="<?= base_url('admin/profil/ubah-password') ?>" class="btn-pass">Ubah Password</a>
+        <a href="<?= base_url('Admin/profil/edit/' . session()->get('id_account')) ?>" class="btn-edit">Edit Profil</a>
+        <a href="<?= base_url('Admin/profil/ubah-password') ?>" class="btn-pass">Ubah Password</a>
       </div>
     </div>
   </div>
@@ -271,7 +271,7 @@
     };
 
     function uploadFoto(formData) {
-      fetch('<?= base_url("admin/profil/update-foto/" . session()->get("id_account")) ?>', {
+      fetch('<?= base_url("Admin/profil/update-foto/" . session()->get("id_account")) ?>', {
           method: 'POST',
           body: formData
         })
