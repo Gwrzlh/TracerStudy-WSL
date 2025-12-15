@@ -74,12 +74,12 @@ $routes->group('admin', function($routes){
     
          // --- Satuan Organisasi ---
     $routes->group('satuanorganisasi', function ($routes) {
-        $routes->get('/', 'SatuanOrganisasi::index');
-        $routes->get('create', 'SatuanOrganisasi::create');
-        $routes->post('store', 'SatuanOrganisasi::store');
-        $routes->get('edit/(:num)', 'SatuanOrganisasi::edit/$1');
-        $routes->post('update/(:num)', 'SatuanOrganisasi::update/$1');
-        $routes->post('delete/(:num)', 'SatuanOrganisasi::delete/$1');
+        $routes->get('/', 'Organisasi\SatuanOrganisasi::index');
+        $routes->get('create', 'Organisasi\SatuanOrganisasi::create');
+        $routes->post('store', 'Organisasi\SatuanOrganisasi::store');
+        $routes->get('edit/(:num)', 'Organisasi\SatuanOrganisasi::edit/$1');
+        $routes->post('update/(:num)', 'Organisasi\SatuanOrganisasi::update/$1');
+        $routes->post('delete/(:num)', 'Organisasi\SatuanOrganisasi::delete/$1');
 
         // AJAX get prodi by jurusan
         $routes->get('getProdi/(:num)', 'SatuanOrganisasi::getProdiByJurusan/$1');
