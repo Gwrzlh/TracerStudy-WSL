@@ -730,3 +730,4 @@ $routes->group('jabatan', ['filter' => 'jabatanAuth'], function ($routes) {
 // ==================== PERUSAHAAN DASHBOARD ====================
 $routes->get('perusahaan/dashboard', 'Organisasi\PerusahaanController::dashboard');
 
+$routes->get('/debug-env', 'DebugEnv::index');

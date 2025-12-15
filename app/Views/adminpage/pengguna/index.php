@@ -25,6 +25,9 @@
                         <!-- Role -->
                         <select name="role" id="roleSelect" class="form-select">
                             <option value=""> Semua Role </option>
+                            <option value="alumni_surveyor" <?= $roleId == 'alumni_surveyor' ? 'selected' : '' ?>>
+                                Alumni Surveyor
+                            </option>
                             <?php foreach ($roles as $r): ?>
                                 <option value="<?= esc($r['id']) ?>" <?= $roleId == $r['id'] ? 'selected' : '' ?>>
                                     <?= esc($r['nama']) ?>
@@ -63,52 +66,40 @@
                     </form>
                 </div>
 
-                <!-- 🎛️ BUTTONS -->
-                <div class="button-container d-flex gap-2 flex-wrap">
-                    <a href="<?= base_url('admin/pengguna/errorLogs') ?>" class="btn btn-outline-danger">
-                        <i class="fas fa-bug"></i> Riwayat Error
-                    </a>
+               <!-- 🎛️ BUTTONS -->
+<div class="button-container d-flex gap-2 flex-wrap">
 
-                    <a href="<?= base_url('admin/pengguna/tambahPengguna') ?>" 
-   class="btn btn-add"
-   style="
-       background-color: <?= esc(get_setting('pengguna_button_color')) ?>;
-       color: <?= esc(get_setting('pengguna_button_text_color')) ?>;
-   "
-   onmouseover="this.style.backgroundColor='<?= esc(get_setting('pengguna_button_hover_color')) ?>'"
-   onmouseout="this.style.backgroundColor='<?= esc(get_setting('pengguna_button_color')) ?>'"
->
-    <i class="fas fa-user-plus"></i> <?= get_setting('pengguna_button_text', 'Tambah Pengguna') ?>
-</a>
+    <a href="<?= base_url('admin/pengguna/errorLogs') ?>" class="btn btn-outline-danger">
+        <i class="fas fa-bug"></i> Riwayat Error
+    </a>
 
+    <a href="<?= base_url('admin/pengguna/tambahPengguna') ?>" class="btn btn-primary btn-add">
+        <i class="fas fa-user-plus"></i> <?= get_setting('pengguna_button_text', 'Tambah Pengguna') ?>
+    </a>
 
-                  <a href="<?= base_url('admin/pengguna/import') ?>"
-   class="btn btn-import"
-   style="
-       background-color: <?= esc(get_setting('import_button_color')) ?>;
-       color: <?= esc(get_setting('import_button_text_color')) ?>;
-   "
-   onmouseover="this.style.backgroundColor='<?= esc(get_setting('import_button_hover_color')) ?>'"
-   onmouseout="this.style.backgroundColor='<?= esc(get_setting('import_button_color')) ?>'"
->
-    <i class="fas fa-file-import"></i> <?= get_setting('import_button_text', 'Import Akun') ?>
-</a>
-                    <form id="exportForm" action="<?= base_url('admin/pengguna/exportSelected') ?>" method="post" class="d-inline">
-                        <?= csrf_field() ?>
-                        <button type="button" id="btnExportSelected" class="btn btn-outline-info btn-export">
-                            <i class="fas fa-file-export"></i> Export Terpilih
-                        </button>
-                    </form>
+    <a href="<?= base_url('admin/pengguna/import') ?>" class="btn btn-success btn-import">
+        <i class="fas fa-file-import"></i> <?= get_setting('import_button_text', 'Import Akun') ?>
+    </a>
 
-                    <a href="<?= base_url('admin/pengguna/export?role=' . ($roleId ?? '') . '&keyword=' . ($keyword ?? '')) ?>" class="btn btn-outline-primary">
-                        <i class="fas fa-file-export"></i> Export Semua
-                    </a>
+    <!-- FORM EXPORT TERPILIH (HARUS DI LUAR bulkDeleteForm) -->
+    <form id="exportForm" action="<?= base_url('admin/pengguna/exportSelected') ?>" method="post" class="d-inline">
+        <?= csrf_field() ?>
+        <input type="hidden" name="ids" id="exportIds">
+        <button type="button" id="btnExportSelected" class="btn btn-outline-info btn-export">
+            <i class="fas fa-file-export"></i> Export Terpilih
+        </button>
+    </form>
 
-                    <button type="submit" form="bulkDeleteForm" class="btn btn-delete-multiple">
-                        <i class="fas fa-trash-alt"></i> Hapus Terpilih
-                    </button>
-                </div>
-            </div>
+    <a href="<?= base_url('admin/pengguna/export?role=' . ($roleId ?? '') . '&keyword=' . ($keyword ?? '')) ?>" class="btn btn-outline-primary">
+        <i class="fas fa-file-export"></i> Export Semua
+    </a>
+
+    <button type="submit" form="bulkDeleteForm" class="btn btn-delete-multiple">
+        <i class="fas fa-trash-alt"></i> Hapus Terpilih
+    </button>
+
+</div>
+
 
             <!-- ====== TABLE ====== -->
             <form id="bulkDeleteForm" action="<?= base_url('admin/pengguna/deleteMultiple') ?>" method="post">
@@ -140,15 +131,32 @@
                                             </td>
                                             <td>
                                                 <?php
-                                                    $status = strtolower(trim((string)$acc['status']));
-                                                    $isActive = ($status === '1' || $status === 'active' || $status === 'aktif');
+                                                $status = strtolower(trim((string)$acc['status']));
+                                                $isActive = ($status === '1' || $status === 'active' || $status === 'aktif');
                                                 ?>
                                                 <span class="badge badge-status <?= $isActive ? 'badge-active' : 'badge-inactive' ?>">
                                                     <?= $isActive ? 'Active' : 'Inactive' ?>
                                                 </span>
                                             </td>
                                             <td><?= esc($acc['email']) ?></td>
-                                            <td><span class="badge badge-role"><?= esc($acc['nama_role'] ?? 'No Role') ?></span></td>
+                                            <td>
+                                                <?php
+                                                // Tentukan label role
+                                                $roleLabel = $acc['nama_role'] ?? 'No Role';
+
+                                                // Jika role = alumni (id_role = 1), cek pembeda surveyor
+                                                if (isset($acc['id_role']) && $acc['id_role'] == 1) {
+                                                    if (!empty($acc['id_surveyor'])) {
+                                                        $roleLabel = 'Alumni Surveyor';
+                                                    } else {
+                                                        $roleLabel = 'Alumni';
+                                                    }
+                                                }
+                                                ?>
+
+                                                <span class="badge badge-role"><?= esc($roleLabel) ?></span>
+                                            </td>
+
                                             <td><?= esc($acc['angkatan'] ?? '-') ?></td>
                                             <td><?= esc($acc['tahun_kelulusan'] ?? '-') ?></td>
                                             <td>
@@ -186,114 +194,124 @@
 
 <!-- ====== SWEETALERT2 HANDLER ====== -->
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    // === FLASH MESSAGES ===
+    document.addEventListener('DOMContentLoaded', function() {
+        // === FLASH MESSAGES ===
+        <?php if (session()->getFlashdata('success')): ?>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '<?= esc(session()->getFlashdata('success')) ?>',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        <?php endif; ?>
 
-    <?php if (session()->getFlashdata('errorWajib')): ?>
-    Swal.fire({
-        icon: 'warning',
-        title: 'Data Wajib!',
-        text: '<?= esc(session()->getFlashdata('errorWajib')) ?>',
-        confirmButtonText: 'OK'
-    });
-<?php endif; ?>
-
-    <?php if (session()->getFlashdata('success')): ?>
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: '<?= esc(session()->getFlashdata('success')) ?>',
-            timer: 2000,
-            showConfirmButton: false
-        });
-    <?php endif; ?>
-
-    <?php if (session()->getFlashdata('errors')): ?>
-        Swal.fire({
-            icon: 'error',
-            title: 'Terjadi Kesalahan!',
-            html: `<ul style="text-align:left;"> 
-                <?php foreach(session()->getFlashdata('errors') as $field => $error): ?>
+        <?php if (session()->getFlashdata('errors')): ?>
+            Swal.fire({
+                icon: 'error',
+                title: 'Terjadi Kesalahan!',
+                html: `<ul style="text-align:left;"> 
+                <?php foreach (session()->getFlashdata('errors') as $field => $error): ?>
                     <li><?= esc($error) ?></li>
                 <?php endforeach; ?>
             </ul>`
-        });
-    <?php endif; ?>
+            });
+        <?php endif; ?>
 
-    <?php if (session()->getFlashdata('errorLogs')): ?>
-        Swal.fire({
-            icon: 'error',
-            title: 'Data Gagal Diimport!',
-            html: `<ul style="text-align:left;"> 
-                <?php foreach(session()->getFlashdata('errorLogs') as $log): ?>
+        <?php if (session()->getFlashdata('errorLogs')): ?>
+            Swal.fire({
+                icon: 'error',
+                title: 'Data Gagal Diimport!',
+                html: `<ul style="text-align:left;"> 
+                <?php foreach (session()->getFlashdata('errorLogs') as $log): ?>
                     <li><?= esc($log) ?></li>
                 <?php endforeach; ?>
             </ul>`
-        });
-    <?php endif; ?>
+            });
+        <?php endif; ?>
 
-    // === KONFIRMASI HAPUS SATUAN ===
-    document.querySelectorAll('.btn-delete-single').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const id = btn.getAttribute('data-id');
-            Swal.fire({
-                title: 'Yakin ingin menghapus?',
-                text: "Data pengguna ini akan dihapus permanen.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = `<?= base_url('admin/pengguna/delete/') ?>${id}`;
-                    const csrf = document.createElement('input');
-                    csrf.type = 'hidden';
-                    csrf.name = '<?= csrf_token() ?>';
-                    csrf.value = '<?= csrf_hash() ?>';
-                    form.appendChild(csrf);
-                    document.body.appendChild(form);
-                    form.submit();
-                }
+        // === KONFIRMASI HAPUS SATUAN ===
+        document.querySelectorAll('.btn-delete-single').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                Swal.fire({
+                    title: 'Yakin ingin menghapus?',
+                    text: "Data pengguna ini akan dihapus permanen.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = `<?= base_url('admin/pengguna/delete/') ?>${id}`;
+                        const csrf = document.createElement('input');
+                        csrf.type = 'hidden';
+                        csrf.name = '<?= csrf_token() ?>';
+                        csrf.value = '<?= csrf_hash() ?>';
+                        form.appendChild(csrf);
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                });
             });
         });
+
+        // === KONFIRMASI HAPUS TERPILIH ===
+        const bulkForm = document.getElementById('bulkDeleteForm');
+        const bulkButton = document.querySelector('.btn-delete-multiple');
+        if (bulkButton) {
+            bulkButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Hapus akun terpilih?',
+                    text: 'Semua pengguna yang dipilih akan dihapus!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        bulkForm.submit();
+                    }
+                });
+            });
+        }
+
+        // === PILIH SEMUA CHECKBOX ===
+        const selectAll = document.getElementById('selectAll');
+        const checkboxes = document.querySelectorAll('.row-checkbox');
+        if (selectAll) {
+            selectAll.addEventListener('change', () => {
+                checkboxes.forEach(cb => cb.checked = selectAll.checked);
+            });
+        }
     });
-
-    // === KONFIRMASI HAPUS TERPILIH ===
-    const bulkForm = document.getElementById('bulkDeleteForm');
-    const bulkButton = document.querySelector('.btn-delete-multiple');
-    if (bulkButton) {
-        bulkButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            Swal.fire({
-                title: 'Hapus akun terpilih?',
-                text: 'Semua pengguna yang dipilih akan dihapus!',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    bulkForm.submit();
-                }
-            });
+</script>
+<script>
+document.getElementById('btnExportSelected').addEventListener('click', function () {
+    const checked = document.querySelectorAll('.row-checkbox:checked');
+    if (checked.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Tidak ada data!',
+            text: 'Pilih minimal satu pengguna untuk export.',
         });
+        return;
     }
 
-    // === PILIH SEMUA CHECKBOX ===
-    const selectAll = document.getElementById('selectAll');
-    const checkboxes = document.querySelectorAll('.row-checkbox');
-    if (selectAll) {
-        selectAll.addEventListener('change', () => {
-            checkboxes.forEach(cb => cb.checked = selectAll.checked);
-        });
-    }
+    let ids = [];
+    checked.forEach(c => ids.push(c.value));
+
+    document.getElementById('exportIds').value = JSON.stringify(ids);
+    document.getElementById('exportForm').submit();
 });
 </script>
+
 
 <?php $this->endSection(); ?>

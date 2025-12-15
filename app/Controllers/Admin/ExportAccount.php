@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Controllers\Admin;
+namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use App\Models\AccountModel;
+use App\Models\User\AccountModel;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
@@ -13,31 +13,36 @@ class ExportAccount extends BaseController
     public function index()
     {
         $db = \Config\Database::connect();
-
-        // --- ALUMNI ---
         $alumni = $db->table('account')
-            ->select('
-                account.username,
-                account.email,
-                role.nama as role,
-                detailaccount_alumni.nama_lengkap as nama,
-                detailaccount_alumni.nim,
-                jurusan.nama_jurusan,
-                prodi.nama_prodi,
-                detailaccount_alumni.angkatan,
-                detailaccount_alumni.tahun_kelulusan,
-                detailaccount_alumni.ipk,
-                detailaccount_alumni.jenisKelamin,
-                detailaccount_alumni.notlp,
-                detailaccount_alumni.alamat,
-                account.status
-            ')
+            ->select("
+        account.username,
+        account.email,
+        CASE
+            WHEN account.id_role = 1 AND account.id_surveyor IS NOT NULL THEN 'Alumni Surveyor'
+            WHEN account.id_role = 1 AND account.id_surveyor IS NULL THEN 'Alumni'
+            ELSE role.nama
+        END AS role,
+        da.nama_lengkap AS nama,
+        da.nim,
+        jurusan.nama_jurusan,
+        prodi.nama_prodi,
+        da.angkatan,
+        da.tahun_kelulusan,
+        da.ipk,
+        da.jenisKelamin,
+        da.notlp,
+        da.alamat,
+        account.status
+    ")
             ->join('role', 'role.id = account.id_role', 'left')
-            ->join('detailaccount_alumni', 'detailaccount_alumni.id_account = account.id', 'left')
-            ->join('jurusan', 'jurusan.id = detailaccount_alumni.id_jurusan', 'left')
-            ->join('prodi', 'prodi.id = detailaccount_alumni.id_prodi', 'left')
+            ->join('detailaccount_alumni da', 'da.id_account = account.id', 'left')
+            ->join('jurusan', 'jurusan.id = da.id_jurusan', 'left')
+            ->join('prodi', 'prodi.id = da.id_prodi', 'left')
             ->where('role.nama', 'alumni')
-            ->get()->getResultArray();
+            ->get()
+            ->getResultArray();
+
+
 
         // --- PERUSAHAAN ---
         $perusahaan = $db->table('account')
@@ -170,9 +175,20 @@ class ExportAccount extends BaseController
         $sheet = $spreadsheet->getActiveSheet();
 
         $headers = [
-            'Username', 'Email', 'Role', 'Nama Lengkap', 'NIM', 'Jurusan', 'Prodi',
-            'Angkatan', 'Tahun Kelulusan', 'IPK', 'Jenis Kelamin',
-            'No Telp', 'Alamat', 'Status'
+            'Username',
+            'Email',
+            'Role',
+            'Nama Lengkap',
+            'NIM',
+            'Jurusan',
+            'Prodi',
+            'Angkatan',
+            'Tahun Kelulusan',
+            'IPK',
+            'Jenis Kelamin',
+            'No Telp',
+            'Alamat',
+            'Status'
         ];
 
         $col = 'A';

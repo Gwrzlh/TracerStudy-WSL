@@ -50,10 +50,27 @@ class PenggunaController extends BaseController
         $builder->select('account.*, role.nama AS nama_role, da.angkatan, da.tahun_kelulusan')
                 ->join('role', 'role.id = account.id_role', 'left')
                 ->join('detailaccount_alumni da', 'da.id_account = account.id', 'left');
+                
 
         // 🔹 Filter Role
-        if (!empty($roleId) && is_numeric($roleId)) {
-            $builder->where('account.id_role', $roleId);
+         if (!empty($roleId)) {
+
+            // Jika numeric → gunakan id_role seperti biasa
+            if (is_numeric($roleId)) {
+                $builder->where('account.id_role', $roleId);
+            } else {
+                // === Filter Alumni Biasa ===
+                if ($roleId === 'alumni_biasa') {
+                    $builder->where('account.id_role', 1);
+                    $builder->where('account.id_surveyor', null);
+                }
+
+                // === Filter Alumni Surveyor ===
+                if ($roleId === 'alumni_surveyor'){
+                    $builder->where('account.id_role', 1);
+                    $builder->where('account.id_surveyor IS NOT NULL', null, false);
+                }
+            }
         }
 
         // 🔹 Filter Tahun Masuk (angkatan)
@@ -527,7 +544,7 @@ class PenggunaController extends BaseController
 
         // dd($cities);
 
-        return view('adminpage\pengguna\edit', [
+        return view('adminpage/pengguna/edit', [
             'account' => $dataAccount,
             'detail' => $dataDetail,
             'role' => $role,
@@ -1058,128 +1075,224 @@ public function deleteMultiple()
     }
 }
 
+    public function exportSelected()
+    {
+        $ids = $this->request->getPost('ids');
 
-public function exportSelected()
-{
-    $ids = $this->request->getPost('ids');
-    if (empty($ids)) {
-        return redirect()->back()->with('error', 'Tidak ada pengguna yang dipilih untuk diexport.');
-    }
+        if (!is_array($ids)) {
+            $ids = json_decode($ids, true);
+        }
 
-    $db = \Config\Database::connect();
+        if (empty($ids)) {
+            return redirect()->back()->with('error', 'Tidak ada pengguna yang dipilih untuk diexport.');
+        }
 
-    // Ambil role masing-masing akun
-    $accounts = $db->table('account')
-        ->select('account.id, account.username, account.email, account.status, role.nama as role')
-        ->join('role', 'role.id = account.id_role', 'left')
-        ->whereIn('account.id', $ids)
-        ->get()
-        ->getResultArray();
+        $db = \Config\Database::connect();
 
-    if (empty($accounts)) {
-        return redirect()->back()->with('error', 'Data tidak ditemukan.');
-    }
+        // Ambil akun terpilih
+        $accounts = $db->table('account')
+            ->select('account.*, role.nama as role')
+            ->join('role', 'role.id = account.id_role', 'left')
+            ->whereIn('account.id', $ids)
+            ->get()
+            ->getResultArray();
 
-    // Cek role dominan (misal semua admin, atau semua alumni)
-    $roles = array_unique(array_column($accounts, 'role'));
-    if (count($roles) > 1) {
-        return redirect()->back()->with('error', 'Pilih akun dengan role yang sama untuk export.');
-    }
+        if (empty($accounts)) {
+            return redirect()->back()->with('error', 'Data tidak ditemukan.');
+        }
 
-    $role = strtolower($roles[0]);
-    $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-    $sheet = $spreadsheet->getActiveSheet();
+        // Deteksi role utama (admin, alumni, kaprodi, atasan, perusahaan)
+        $roles = array_unique(array_column($accounts, 'role'));
 
-    // Sesuaikan query & kolom berdasarkan role
-    switch ($role) {
-        case 'alumni':
-            $data = $db->table('account')
-                ->select('account.username, account.email, detailaccount_alumni.nama_lengkap, detailaccount_alumni.nim, detailaccount_alumni.angkatan, detailaccount_alumni.tahun_kelulusan, detailaccount_alumni.ipk, detailaccount_alumni.alamat, account.status')
-                ->join('detailaccount_alumni', 'detailaccount_alumni.id_account = account.id', 'left')
-                ->whereIn('account.id', $ids)
-                ->get()->getResultArray();
+        if (count($roles) > 1) {
+            return redirect()->back()->with('error', 'Pilih akun dengan role yang sama untuk export.');
+        }
 
-            $headers = ['Username', 'Email', 'Nama Lengkap', 'NIM', 'Angkatan', 'Tahun Kelulusan', 'IPK', 'Alamat', 'Status'];
-            break;
+        // Role utama (ex: Alumni, Admin)
+        $role = strtolower($roles[0]);
 
-        case 'admin':
-            $data = $db->table('account')
-                ->select('account.username, account.email, detailaccount_admin.nama_lengkap, account.status')
-                ->join('detailaccount_admin', 'detailaccount_admin.id_account = account.id', 'left')
-                ->whereIn('account.id', $ids)
-                ->get()->getResultArray();
+        // Bedakan Alumni Surveyor vs Alumni Biasa
+        $isAlumniSurveyor = false;
 
-            $headers = ['Username', 'Email', 'Nama Lengkap', 'Status'];
-            break;
+        if ($role === 'alumni') {
+            $isAlumniSurveyor = true;
 
-        case 'kaprodi':
-            $data = $db->table('account')
-                ->select('account.username, account.email, detailaccount_kaprodi.nama_lengkap,account.status')
-                ->join('detailaccount_kaprodi', 'detailaccount_kaprodi.id_account = account.id', 'left')
-                ->whereIn('account.id', $ids)
-                ->get()->getResultArray();
+            foreach ($accounts as $acc) {
+                if (empty($acc['id_surveyor'])) {
+                    $isAlumniSurveyor = false;
+                    break;
+                }
+            }
+        }
 
-            $headers = ['Username', 'Email', 'Nama Lengkap',  'Status'];
-            break;
+        // Spreadsheet
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
 
-        case 'perusahaan':
-            $table = in_array('detailaccount_perusahaan', $db->listTables())
-                ? 'detailaccount_perusahaan'
-                : 'detailaccoount_perusahaan';
-            $data = $db->table('account')
-                ->select("account.username, account.email, {$table}.nama_perusahaan, {$table}.alamat1, {$table}.notlp, account.status")
-                ->join($table, "{$table}.id_account = account.id", 'left')
-                ->whereIn('account.id', $ids)
-                ->get()->getResultArray();
+        // ==========
+        //   SWITCH
+        // ==========
+        switch (true) {
 
-            $headers = ['Username', 'Email', 'Nama Perusahaan', 'Alamat', 'No Telp', 'Status'];
-            break;
+            // ========================
+            //    ALUMNI SURVEYOR
+            // ========================
+            case ($role === 'alumni' && $isAlumniSurveyor):
 
-        case 'atasan':
-            $data = $db->table('account')
-                ->select('account.username, account.email, detailaccount_atasan.nama_lengkap,detailaccount_atasan.notlp, account.status')
-                ->join('detailaccount_atasan', 'detailaccount_atasan.id_account = account.id', 'left')
-                ->whereIn('account.id', $ids)
-                ->get()->getResultArray();
+                $data = $db->table('account')
+                    ->select('
+            account.username,
+            account.email,
+            da.nama_lengkap,
+            da.nim,
+            jurusan.nama_jurusan,
+            prodi.nama_prodi,
+            da.angkatan,
+            da.tahun_kelulusan,
+            da.ipk,
+            da.jenisKelamin,
+            da.notlp,
+            da.alamat,
+            account.status
+        ')
+                    ->join('detailaccount_alumni da', 'da.id_account = account.id', 'left')
+                    ->join('jurusan', 'jurusan.id = da.id_jurusan', 'left')
+                    ->join('prodi', 'prodi.id = da.id_prodi', 'left')
+                    ->whereIn('account.id', $ids)
+                    ->where('account.id_surveyor IS NOT NULL', null, false)
+                    ->get()
+                    ->getResultArray();
 
-            $headers = ['Username', 'Email', 'Nama Lengkap', 'notlp', 'Status'];
-            break;
+                $headers = [
+                    'Username',
+                    'Email',
+                    'Nama Lengkap',
+                    'NIM',
+                    'Jurusan',
+                    'Prodi',
+                    'Angkatan',
+                    'Tahun Kelulusan',
+                    'IPK',
+                    'Jenis Kelamin',
+                    'No Telp',
+                    'Alamat',
+                    'Status'
+                ];
+                break;
 
-        default:
-            return redirect()->back()->with('error', 'Role tidak dikenali.');
-    }
 
-    // Isi header
-    $col = 'A';
-    foreach ($headers as $header) {
-        $sheet->setCellValue($col . '1', $header);
-        $col++;
-    }
+            // ========================
+            //      ALUMNI BIASA
+            // ========================
+            case ($role === 'alumni'):
 
-    // Isi data
-    $row = 2;
-    foreach ($data as $d) {
+                $data = $db->table('account')
+                    ->select('account.username, account.email, da.nama_lengkap, da.nim, da.angkatan, da.tahun_kelulusan, da.ipk, da.alamat, account.status')
+                    ->join('detailaccount_alumni da', 'da.id_account = account.id', 'left')
+                    ->whereIn('account.id', $ids)
+                    ->where('account.id_surveyor', null)
+                    ->get()
+                    ->getResultArray();
+
+                $headers = ['Username', 'Email', 'Nama Lengkap', 'NIM', 'Angkatan', 'Tahun Kelulusan', 'IPK', 'Alamat', 'Status'];
+                break;
+
+            // ========================
+            //         ADMIN
+            // ========================
+            case ($role === 'admin'):
+                $data = $db->table('account')
+                    ->select('account.username, account.email, da.nama_lengkap, account.status')
+                    ->join('detailaccount_admin da', 'da.id_account = account.id', 'left')
+                    ->whereIn('account.id', $ids)
+                    ->get()->getResultArray();
+
+                $headers = ['Username', 'Email', 'Nama Lengkap', 'Status'];
+                break;
+
+            // ========================
+            //         KAPRODI
+            // ========================
+            case ($role === 'kaprodi'):
+                $data = $db->table('account')
+                    ->select('account.username, account.email, da.nama_lengkap, account.status')
+                    ->join('detailaccount_kaprodi da', 'da.id_account = account.id', 'left')
+                    ->whereIn('account.id', $ids)
+                    ->get()->getResultArray();
+
+                $headers = ['Username', 'Email', 'Nama Lengkap', 'Status'];
+                break;
+
+            // ========================
+            //       PERUSAHAAN
+            // ========================
+            case ($role === 'perusahaan'):
+                $table = in_array('detailaccount_perusahaan', $db->listTables())
+                    ? 'detailaccount_perusahaan'
+                    : 'detailaccoount_perusahaan';
+
+                $data = $db->table('account')
+                    ->select("account.username, account.email, d.nama_perusahaan, d.alamat1, d.notlp, account.status")
+                    ->join("$table d", "d.id_account = account.id", 'left')
+                    ->whereIn('account.id', $ids)
+                    ->get()->getResultArray();
+
+                $headers = ['Username', 'Email', 'Nama Perusahaan', 'Alamat', 'No Telp', 'Status'];
+                break;
+
+            // ========================
+            //         ATASAN
+            // ========================
+            case ($role === 'atasan'):
+                $data = $db->table('account')
+                    ->select('account.username, account.email, da.nama_lengkap, da.notlp, account.status')
+                    ->join('detailaccount_atasan da', 'da.id_account = account.id', 'left')
+                    ->whereIn('account.id', $ids)
+                    ->get()->getResultArray();
+
+                $headers = ['Username', 'Email', 'Nama Lengkap', 'No Telp', 'Status'];
+                break;
+
+            default:
+                return redirect()->back()->with('error', 'Role tidak dikenali.');
+        }
+
+        // ========================
+        //   GENERATE FILE EXCEL
+        // ========================
+
+        // Header kolom
         $col = 'A';
-        foreach ($headers as $key => $header) {
-            // ambil urutan kolom sesuai header
-            $sheet->setCellValue($col . $row, array_values($d)[$key] ?? '-');
+        foreach ($headers as $header) {
+            $sheet->setCellValue($col . '1', $header);
             $col++;
         }
-        $row++;
+
+        // Isi data
+        $row = 2;
+        foreach ($data as $d) {
+            $col = 'A';
+            foreach (array_values($d) as $value) {
+                $sheet->setCellValue($col . $row, $value);
+                $col++;
+            }
+            $row++;
+        }
+
+        // Auto-size kolom
+        foreach (range('A', $col) as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        // Download
+        $filename = 'export_' . ($isAlumniSurveyor ? 'alumni_surveyor' : $role) . '_' . date('Ymd_His') . '.xlsx';
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        $writer->save('php://output');
+        exit;
     }
-
-    foreach (range('A', $col) as $columnID) {
-        $sheet->getColumnDimension($columnID)->setAutoSize(true);
-    }
-
-    $filename = 'export_' . $role . '_' . date('Ymd_His') . '.xlsx';
-    $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-
-    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment; filename="' . $filename . '"');
-    header('Cache-Control: max-age=0');
-    $writer->save('php://output');
-    exit;
-}
 
 }
