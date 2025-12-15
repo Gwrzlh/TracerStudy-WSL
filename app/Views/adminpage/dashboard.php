@@ -371,7 +371,7 @@
         <div class="dashboard-header loading">
             <div class="header-content">
                 <div class="dashboard-logo">
-                    <img src="/images/logo.png" alt="Tracer Study" class="logo mb-2" style="height: 60px;">
+                    <img src="<?= base_url('images/logo.png') ?>" alt="Tracer Study" class="logo mb-2" style="height: 60px;">
                 </div>
                 <div class="header-text">
                     <h1 class="dashboard-title"><?= esc($dashboard['judul'] ?? 'Dashboard Admin Tracer Study') ?></h1>
@@ -383,9 +383,30 @@
         <!-- TOP CARDS -->
         <div class="top-cards">
             <!-- User Info Card -->
+            <?php
+                $session = session();
+                $username = $session->get('username');
+                $foto = $session->get('foto');
+
+                $fotoPath = FCPATH . 'uploads/foto_admin/' . ($foto ?? '');
+                $fotoUrl = ($foto && file_exists($fotoPath))
+                    ? base_url('uploads/foto_admin/' . $foto)
+                    : null;
+            ?>
+
             <div class="card user-info-card loading">
                 <div class="user-avatar">
-                    <?= strtoupper(substr(session()->get('username'), 0, 2)) ?>
+                    <?php if ($fotoUrl): ?>
+                        <img 
+                            src="<?= esc($fotoUrl) ?>" 
+                            alt="Foto Profil"
+                            class="w-14 h-14 rounded-full object-cover shadow-md border"
+                        >
+                    <?php else: ?>
+                        <div class="w-14 h-14 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-lg">
+                            <?= strtoupper(substr($username, 0, 2)) ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
                 <div class="user-name"><?= session()->get('username') ?></div>
                 <div class="user-email"><?= session()->get('email') ?></div>

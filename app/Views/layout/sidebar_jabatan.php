@@ -20,7 +20,7 @@ $currentRoute = service('request')->uri->getPath();
             <!-- Logo -->
             <div>
                 <div class="sidebar-logo">
-                    <img src="/images/logo.png" alt="Logo Jabatan" class="logo-img" />
+                    <img src="<?= base_url('images/logo.png') ?>" alt="Logo Jabatan" class="logo-img" />
                     Jabatan Lainnya
                 </div>
 
@@ -68,7 +68,7 @@ $currentRoute = service('request')->uri->getPath();
 
           <!-- Logout (Jabatan Lainnya) -->
 <div class="mt-6 px-4 space-y-2">
-    <form action="/logout" method="get">
+    <form action="<?= base_url('logout') ?>" method="get">
         <button type="submit"
             style="background-color: <?= get_setting('jabatanlainnya_logout_button_color', '#ef4444') ?>;
                    color: <?= get_setting('jabatanlainnya_logout_button_text_color', '#ffffff') ?>;

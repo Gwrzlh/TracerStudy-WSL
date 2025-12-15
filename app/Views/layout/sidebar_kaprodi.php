@@ -26,7 +26,7 @@ $logoutHoverColor  = get_setting('kaprodi_logout_button_hover_color', '#bb2d3b')
       <!-- Logo -->
       <div>
         <div class="sidebar-logo">
-          <img src="/images/logo.png" alt="Logo POLBAN" class="logo-img" />
+          <img src="<?= base_url('images/logo.png') ?>" alt="Logo POLBAN" class="logo-img" />
           Kaprodi
         </div>
 
@@ -115,7 +115,7 @@ $logoutHoverColor  = get_setting('kaprodi_logout_button_hover_color', '#bb2d3b')
           </div>
         </div>
 
-        <form action="/logout" method="get">
+        <form action="<?= base_url('logout') ?>" method="get">
           <button type="submit"
             class="w-full font-semibold rounded-lg px-4 py-2 transition duration-300"
             style="

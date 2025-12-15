@@ -6,7 +6,7 @@
     <h2 class="text-lg font-semibold mb-4">Relasi Atasan ↔ Alumni</h2>
 
     <!-- Form Simpan Relasi -->
-    <form id="form-relasi" method="POST" action="<?= site_url('admin/relasi-atasan-alumni/store') ?>" class="space-y-4">
+    <form id="form-relasi" method="POST" action="<?= base_url('admin/relasi-atasan-alumni/store') ?>" class="space-y-4">
       <?= csrf_field() ?>
 
       <div>

@@ -22,7 +22,7 @@ $currentRoute = service('request')->uri->getPath();
       <!-- Logo -->
       <div>
         <div class="sidebar-logo">
-          <img src="/images/logo.png" alt="Logo POLBAN" class="logo-img" />
+          <img src="<?= base_url('images/logo.png') ?>" alt="Logo POLBAN" class="logo-img" />
           Tracer Study
         </div>
 
@@ -99,7 +99,7 @@ $currentRoute = service('request')->uri->getPath();
           </div>
         </div>
 
-        <form action="/logout" method="get">
+        <form action="<?= base_url('logout') ?>" method="get">
   <button type="submit"
     style="
       background-color: <?= get_setting('atasan_logout_button_color', '#dc3545') ?>;

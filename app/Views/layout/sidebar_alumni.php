@@ -73,7 +73,7 @@ $settings = $siteSettingModel->getSettings();
       </div>
     </div>
 
-    <form action="/logout" method="get">
+    <form action="<?= base_url('logout') ?>" method="get">
   <button type="submit" 
           class="logout-btn"
           style="background-color: <?= esc($settings['dashboard_logout_button_color'] ?? '#dc2626') ?>;
