@@ -179,9 +179,9 @@ $currentRoute = service('request')->uri->getPath();
         </a>
         <a href="<?= base_url('admin/provinces') ?>"
           class="sidebar-link <?= str_contains($currentRoute, 'provinces') ? 'active' : '' ?>">
-          <i class="fa-solid fa-bell"></i>
+          <i class="fa-solid fa-map-location-dot icon"></i>
           <span>Manage data Provinsi & kota</span>
-        </a>
+          </a>
 
 
       </nav>
