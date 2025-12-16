@@ -287,7 +287,7 @@
                 </div>
 
                 <button type="submit">Masuk</button>
-                <a href="/" class="back">&larr; Kembali ke Beranda</a>
+                <a href="<?= base_url('/') ?>" class="back">&larr; Kembali ke Beranda</a>
             </form>
         </div>
 
