@@ -183,34 +183,34 @@ public function profil()
     ]);
 }
 
-public function updateFoto($id)
-{
-    $accountModel = new Accounts();
+// public function updateFoto($id)
+// {
+//     $accountModel = new Accounts();
 
-    $file = $this->request->getFile('foto');
-    if ($file && $file->isValid() && !$file->hasMoved()) {
-        $newName = $file->getRandomName();
-        $file->move(FCPATH . 'uploads/foto_admin', $newName);
+//     $file = $this->request->getFile('foto');
+//     if ($file && $file->isValid() && !$file->hasMoved()) {
+//         $newName = $file->getRandomName();
+//         $file->move(FCPATH . 'uploads/foto_admin', $newName);
 
-        // update database
-        $accountModel->update($id, [
-            'foto' => $newName
-        ]);
+//         // update database
+//         $accountModel->update($id, [
+//             'foto' => $newName
+//         ]);
 
-        // update session juga supaya sidebar langsung ikut berubah
-        session()->set('foto', $newName);
+//         // update session juga supaya sidebar langsung ikut berubah
+//         session()->set('foto', $newName);
 
-        return $this->response->setJSON([
-            'status' => 'success',
-            'fotoUrl' => base_url('uploads/foto_admin/' . $newName)
-        ]);
-    }
+//         return $this->response->setJSON([
+//             'status' => 'success',
+//             'fotoUrl' => base_url('uploads/foto_admin/' . $newName)
+//         ]);
+//     }
 
-    return $this->response->setJSON([
-        'status' => 'error',
-        'message' => 'File tidak valid atau gagal diupload.'
-    ]);
-}
+//     return $this->response->setJSON([
+//         'status' => 'error',
+//         'message' => 'File tidak valid atau gagal diupload.'
+//     ]);
+// }
 public function editProfil($id)
 {
     // Cek biar admin hanya bisa edit profilnya sendiri

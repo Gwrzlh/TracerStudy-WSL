@@ -77,78 +77,48 @@ $currentRoute = service('request')->uri->getPath();
         </nav>
       </div>
 
-      <?php
-      $session = session();
-      $foto = $session->get('foto');
-      $fotoPath = FCPATH . 'uploads/foto_atasan/' . ($foto ?? '');
-      $fotoUrl = ($foto && file_exists($fotoPath))
-        ? base_url('uploads/foto_atasan/' . $foto)
-        : base_url('uploads/default.png');
-      ?>
+  <?php
+$session = session();
+// variabel foto tidak dipakai lagi → boleh dihapus
+?>
 
-      <!-- Profile + Logout -->
-      <div class="mt-6 px-4 space-y-2">
-        <div class="flex items-center gap-4 cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition" id="profileSidebarBtn">
-          <div class="relative">
-            <img id="sidebarFoto" src="<?= $fotoUrl ?>" class="w-12 h-12 rounded-full shadow-md border object-cover">
-            <span class="status-indicator"></span>
-          </div>
-          <div>
-            <p class="font-semibold text-gray-800 text-sm"><?= $session->get('username') ?></p>
-            <p class="text-gray-500 text-xs"><?= $session->get('email') ?></p>
-          </div>
-        </div>
+<!-- ===== Profile + Logout (Atasan) ===== -->
+<div class="mt-6 px-4 space-y-3 border-t pt-4">
 
-        <form action="<?= base_url('logout') ?>" method="get">
-  <button type="submit"
-    style="
-      background-color: <?= get_setting('atasan_logout_button_color', '#dc3545') ?>;
-      color: <?= get_setting('atasan_logout_button_text_color', '#ffffff') ?>;
-      padding: 10px 20px;
-      font-weight: 600;
-      border-radius: 8px;
-      width: 100%;
-      text-align: center;
-      border: none;
-      transition: background-color 0.3s ease;
-    "
-    onmouseover="this.style.backgroundColor='<?= get_setting('atasan_logout_button_hover_color', '#a71d2a') ?>';"
-    onmouseout="this.style.backgroundColor='<?= get_setting('atasan_logout_button_color', '#dc3545') ?>';">
-    <?= esc(get_setting('atasan_logout_button_text', 'Logout')) ?>
-  </button>
-</form>
+  <!-- Username & Email -->
+  <div>
+    <p class="font-semibold text-gray-800 text-sm">
+      <?= esc($session->get('username')) ?>
+    </p>
+    <p class="text-gray-500 text-xs">
+      <?= esc($session->get('email')) ?>
+    </p>
+  </div>
+
+  <!-- Logout -->
+  <form action="<?= base_url('logout') ?>" method="get">
+    <button type="submit"
+      style="
+        background-color: <?= get_setting('atasan_logout_button_color', '#dc3545') ?>;
+        color: <?= get_setting('atasan_logout_button_text_color', '#ffffff') ?>;
+        padding: 10px 20px;
+        font-weight: 600;
+        border-radius: 8px;
+        width: 100%;
+        text-align: center;
+        border: none;
+        transition: background-color 0.3s ease;
+      "
+      onmouseover="this.style.backgroundColor='<?= get_setting('atasan_logout_button_hover_color', '#a71d2a') ?>';"
+      onmouseout="this.style.backgroundColor='<?= get_setting('atasan_logout_button_color', '#dc3545') ?>';">
+      <?= esc(get_setting('atasan_logout_button_text', 'Logout')) ?>
+    </button>
+  </form>
+
+</div>
 
 
-      <!-- Modal Foto -->
-      <div id="profileModal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
-        <div class="modal-content relative bg-white rounded-xl shadow-xl p-4">
-          <span id="closeModal" class="absolute top-2 right-3 text-gray-700 text-xl cursor-pointer">&times;</span>
-          <img id="modalFoto" src="<?= $fotoUrl ?>" class="w-80 h-80 object-cover rounded-xl">
-        </div>
-      </div>
 
-      <script>
-        const profileSidebarBtn = document.getElementById('profileSidebarBtn');
-        const profileModal = document.getElementById('profileModal');
-        const closeModal = document.getElementById('closeModal');
-
-        profileSidebarBtn?.addEventListener('click', () => {
-          profileModal.classList.remove('hidden');
-          setTimeout(() => profileModal.classList.add('show'), 10);
-        });
-
-        closeModal?.addEventListener('click', () => {
-          profileModal.classList.remove('show');
-          setTimeout(() => profileModal.classList.add('hidden'), 300);
-        });
-
-        profileModal?.addEventListener('click', (e) => {
-          if (e.target === profileModal) {
-            profileModal.classList.remove('show');
-            setTimeout(() => profileModal.classList.add('hidden'), 300);
-          }
-        });
-      </script>
 
     </aside>
 

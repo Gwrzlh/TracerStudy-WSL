@@ -43,6 +43,8 @@ $routes->get('sop', 'LandingPage\Tentang::index');
 $routes->get('/respon', 'Kuesioner\UserQuestionController::responseLanding');
 $routes->get('/laporan', 'LandingPage\AdminLaporan::showAll');
 $routes->get('/laporan/(:num)', 'LandingPage\AdminLaporan::showAll/$1');
+$routes->get('laporan/pdf/(:any)', 'LandingPage\AdminLaporan::viewPdf/$1');
+
 
 
 

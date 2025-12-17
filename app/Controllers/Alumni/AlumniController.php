@@ -599,84 +599,84 @@ class AlumniController extends BaseController
     // =============================
     // ✏️ UPDATE PROFIL (Data + Foto)
     // =============================
- public function updateProfil($role = 'alumni')
-{
-    $session   = session();
-    $idAccount = $session->get('id_account');
+//  public function updateProfil($role = 'alumni')
+// {
+//     $session   = session();
+//     $idAccount = $session->get('id_account');
 
-    if (!$idAccount) {
-        return redirect()->to('/login')->with('error', 'Silakan login kembali.');
-    }
+//     if (!$idAccount) {
+//         return redirect()->to('/login')->with('error', 'Silakan login kembali.');
+//     }
 
-    $alumniModel  = new \App\Models\Alumni\AlumniModel();
-    $riwayatModel = new \App\Models\Alumni\RiwayatPekerjaanModel();
+//     $alumniModel  = new \App\Models\Alumni\AlumniModel();
+//     $riwayatModel = new \App\Models\Alumni\RiwayatPekerjaanModel();
 
-    // =====================
-    // Update data profil
-    // =====================
-    $profilData = [
-        'nama_lengkap' => $this->request->getPost('nama_lengkap'),
-        'alamat'       => $this->request->getPost('alamat'),
-    ];
+//     // =====================
+//     // Update data profil
+//     // =====================
+//     $profilData = [
+//         'nama_lengkap' => $this->request->getPost('nama_lengkap'),
+//         'alamat'       => $this->request->getPost('alamat'),
+//     ];
 
-    // Upload foto jika ada
-    $foto = $this->request->getFile('foto');
-    if ($foto && $foto->isValid() && !$foto->hasMoved()) {
-        $uploadPath = FCPATH . 'uploads/foto_alumni/';
-        if (!is_dir($uploadPath)) mkdir($uploadPath, 0777, true);
+//     // Upload foto jika ada
+//     $foto = $this->request->getFile('foto');
+//     if ($foto && $foto->isValid() && !$foto->hasMoved()) {
+//         $uploadPath = FCPATH . 'uploads/foto_alumni/';
+//         if (!is_dir($uploadPath)) mkdir($uploadPath, 0777, true);
 
-        $newName = $foto->getRandomName();
-        $foto->move($uploadPath, $newName);
-        $profilData['foto'] = $newName;
-        $session->set('foto', $newName);
-    }
+//         $newName = $foto->getRandomName();
+//         $foto->move($uploadPath, $newName);
+//         $profilData['foto'] = $newName;
+//         $session->set('foto', $newName);
+//     }
 
-    // Update profil alumni
-    $alumniModel->where('id_account', $idAccount)->set($profilData)->update();
+//     // Update profil alumni
+//     $alumniModel->where('id_account', $idAccount)->set($profilData)->update();
 
-    if (!empty($profilData['nama_lengkap'])) {
-        $session->set('nama_lengkap', $profilData['nama_lengkap']);
-    }
+//     if (!empty($profilData['nama_lengkap'])) {
+//         $session->set('nama_lengkap', $profilData['nama_lengkap']);
+//     }
 
-    // =====================
-    // Tambah/update pekerjaan dari dropdown perusahaan
-    // =====================
-    $idPerusahaan = $this->request->getPost('id_perusahaan');
+//     // =====================
+//     // Tambah/update pekerjaan dari dropdown perusahaan
+//     // =====================
+//     $idPerusahaan = $this->request->getPost('id_perusahaan');
 
-    if (!empty($idPerusahaan)) {
-        $perusahaanModel = new \App\Models\User\DetailaccountPerusahaan();
-        $perusahaanData  = $perusahaanModel->find($idPerusahaan);
+//     if (!empty($idPerusahaan)) {
+//         $perusahaanModel = new \App\Models\User\DetailaccountPerusahaan();
+//         $perusahaanData  = $perusahaanModel->find($idPerusahaan);
 
-        if ($perusahaanData) {
-            // Matikan pekerjaan lama
-            $riwayatModel->where('id_alumni', $idAccount)
-                ->where('is_current', 1)
-                ->set(['is_current' => 0])
-                ->update();
+//         if ($perusahaanData) {
+//             // Matikan pekerjaan lama
+//             $riwayatModel->where('id_alumni', $idAccount)
+//                 ->where('is_current', 1)
+//                 ->set(['is_current' => 0])
+//                 ->update();
 
-            // Buat entri baru
-            $status_kerja = $this->request->getPost('status_kerja');
-            $riwayatData = [
-                'id_alumni'         => $idAccount,
-                'id_perusahaan'     => $idPerusahaan,
-                'perusahaan'        => $perusahaanData['nama_perusahaan'],
-                'jabatan'           => $this->request->getPost('jabatan'),
-                'tahun_masuk'       => $this->request->getPost('tahun_masuk'),
-                'tahun_keluar'      => ($status_kerja === 'masih') ? '0000' : $this->request->getPost('tahun_keluar'),
-                'alamat_perusahaan' => $perusahaanData['alamat1'],
-                'is_current'        => 1,
-                'masih'             => ($status_kerja === 'masih') ? 1 : 0
-            ];
-            $riwayatModel->insert($riwayatData);
-        }
-    }
+//             // Buat entri baru
+//             $status_kerja = $this->request->getPost('status_kerja');
+//             $riwayatData = [
+//                 'id_alumni'         => $idAccount,
+//                 'id_perusahaan'     => $idPerusahaan,
+//                 'perusahaan'        => $perusahaanData['nama_perusahaan'],
+//                 'jabatan'           => $this->request->getPost('jabatan'),
+//                 'tahun_masuk'       => $this->request->getPost('tahun_masuk'),
+//                 'tahun_keluar'      => ($status_kerja === 'masih') ? '0000' : $this->request->getPost('tahun_keluar'),
+//                 'alamat_perusahaan' => $perusahaanData['alamat1'],
+//                 'is_current'        => 1,
+//                 'masih'             => ($status_kerja === 'masih') ? 1 : 0
+//             ];
+//             $riwayatModel->insert($riwayatData);
+//         }
+//     }
 
-    $redirectUrl = $role === 'surveyor'
-        ? base_url('alumni/surveyor/profil')
-        : base_url('alumni/profil');
+//     $redirectUrl = $role === 'surveyor'
+//         ? base_url('alumni/surveyor/profil')
+//         : base_url('alumni/profil');
 
-    return redirect()->to($redirectUrl)->with('success', 'Profil & pekerjaan berhasil diperbarui.');
-}
+//     return redirect()->to($redirectUrl)->with('success', 'Profil & pekerjaan berhasil diperbarui.');
+// }
 
 
 

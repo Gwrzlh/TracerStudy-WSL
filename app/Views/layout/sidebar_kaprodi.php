@@ -102,33 +102,44 @@ $logoutHoverColor  = get_setting('kaprodi_logout_button_hover_color', '#bb2d3b')
       <div class="mt-6 px-4 space-y-2">
         <div class="flex items-center gap-4">
           <div class="relative">
-            <?php
-            $foto = session()->get('foto') ?? 'default.png';
-            $fotoUrl = base_url('uploads/kaprodi/' . $foto);
-            ?>
-            <img src="<?= $fotoUrl ?>" class="profile-img object-cover rounded-full">
-            <span class="status-indicator"></span>
-          </div>
-          <div>
-            <p class="font-semibold text-gray-800 text-sm"><?= session()->get('username') ?? 'kaprodi' ?></p>
-            <p class="text-gray-500 text-xs"><?= session()->get('email') ?? 'kaprodi@polban.ac.id' ?></p>
-          </div>
-        </div>
+           <?php
+$session = session();
+?>
 
-        <form action="<?= base_url('logout') ?>" method="get">
-          <button type="submit"
-            class="w-full font-semibold rounded-lg px-4 py-2 transition duration-300"
-            style="
-      background-color: <?= esc($logoutBgColor) ?>;
-      color: <?= esc($logoutTextColor) ?>;
-      border: none;
-    "
-            onmouseover="this.style.backgroundColor='<?= esc($logoutHoverColor) ?>'"
-            onmouseout="this.style.backgroundColor='<?= esc($logoutBgColor) ?>'">
-            <?= esc($logoutText) ?>
-          </button>
-        </form>
-      </div>
+<!-- ===== Profil + Logout (Kaprodi) ===== -->
+<?php
+$session = session();
+?>
+<div class="shrink-0 bg-white pt-4 pb-2 px-4 space-y-2 border-t">
+
+  <!-- Profil Kaprodi -->
+  <div class="cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition">
+    <div>
+      <p class="font-semibold text-gray-800 text-sm">
+        <?= esc($session->get('username') ?? 'Kaprodi') ?>
+      </p>
+      <p class="text-gray-500 text-xs">
+        <?= esc($session->get('email') ?? 'kaprodi@polban.ac.id') ?>
+      </p>
+    </div>
+  </div>
+
+  <!-- Logout -->
+  <form action="<?= base_url('logout') ?>" method="get">
+    <button type="submit"
+      class="w-full font-semibold rounded-lg px-4 py-2 transition duration-300 text-center"
+      style="
+        background-color: <?= esc($logoutBgColor ?? '#dc3545') ?>;
+        color: <?= esc($logoutTextColor ?? '#ffffff') ?>;
+      "
+      onmouseover="this.style.backgroundColor='<?= esc($logoutHoverColor ?? '#a71d2a') ?>'"
+      onmouseout="this.style.backgroundColor='<?= esc($logoutBgColor ?? '#dc3545') ?>'">
+      <?= esc($logoutText ?? 'Logout') ?>
+    </button>
+  </form>
+
+</div>
+
     </aside>
 
     <!-- Main Content -->

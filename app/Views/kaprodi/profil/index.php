@@ -3,22 +3,7 @@
 
 <div class="bg-white rounded-xl shadow-md p-8 w-full max-w-7xl mx-auto">
 
-  <!-- Header Profil -->
-  <div class="flex items-center mb-6">
-    <?php
-    $foto = $kaprodi['foto'] ?? 'default.png';
-    $fotoUrl = base_url('uploads/kaprodi/' . $foto);
-    ?>
-    <div class="relative">
-      <img src="<?= $fotoUrl ?>" alt="Foto Kaprodi"
-        class="w-24 h-24 rounded-full border object-cover">
-
-      <!-- Tombol Ubah Foto -->
-      <button onclick="openModal()"
-        class="absolute bottom-1 right-1 bg-blue-600 text-white text-xs px-2 py-1 rounded-full shadow hover:bg-blue-700">
-        <i class="fa fa-camera"></i>
-      </button>
-    </div>
+  
 
     <div class="ml-4">
       <h2 class="text-2xl font-bold">Profil Kaprodi</h2>

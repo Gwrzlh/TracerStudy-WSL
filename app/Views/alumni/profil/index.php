@@ -10,16 +10,6 @@
     <h2 class="text-xl font-bold">Profil</h2>
   </div>
 
-  <div class="flex items-center mb-6 gap-6">
-    <!-- FOTO ALUMNI -->
-    <div class="flex flex-col items-center relative">
-      <img id="fotoPreview"
-        src="<?= (!empty($alumni) && !empty($alumni->foto))
-                ? base_url('uploads/foto_alumni/' . $alumni->foto) . '?t=' . time()
-                : base_url('uploads/default.png') ?>"
-        class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg mb-3 cursor-pointer">
-
-    </div>
 
 
     <!-- INFO ALUMNI -->
@@ -33,26 +23,6 @@
   </div>
 </div>
 
-<!-- MODAL FOTO (Ubah Foto Profil) -->
-<div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
-  <div class="bg-white p-6 rounded-xl w-80 flex flex-col gap-4 shadow-lg relative z-50">
-    <h3 class="text-lg font-semibold text-center">Ubah Foto Profil</h3>
-
-    <input type="file" id="fileInput" accept="image/*" class="border rounded px-2 py-1">
-    <video id="video" autoplay class="w-40 h-40 rounded-full border mx-auto hidden object-cover"></video>
-    <canvas id="canvas" style="display:none;"></canvas>
-    <input type="hidden" id="foto_camera" name="foto_camera">
-    <button id="captureBtn" class="bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 hidden">Ambil Foto</button>
-
-    <div class="flex justify-between mt-4">
-      <button type="button" onclick="useCamera()" class="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 flex-1 mr-1">Kamera</button>
-      <button type="button" onclick="submitFoto()" class="bg-purple-600 text-white px-3 py-1 rounded-md hover:bg-purple-700 flex-1 mx-1">Simpan</button>
-      <button type="button" onclick="window.closeModal()" class="bg-gray-400 text-white px-3 py-1 rounded-md hover:bg-gray-500 flex-1 ml-1">Batal</button>
-    </div>
-  </div>
-</div>
-
-<div id="toast" class="fixed bottom-5 right-5 bg-gray-800 text-white px-4 py-2 rounded shadow-lg opacity-0 transform translate-y-5 transition-all duration-300 z-50"></div>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {

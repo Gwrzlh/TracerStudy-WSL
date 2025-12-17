@@ -5,18 +5,6 @@
 <link rel="stylesheet" href="<?= base_url('css/profil.css') ?>">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- Profil Admin -->
-<div class="bg-white rounded-xl shadow-md p-8 w-full max-w-7xl mx-auto">
-  <div class="profile-body">
-    <!-- FOTO ADMIN -->
-    <div class="profile-sidebar">
-      <img id="fotoPreview"
-        src="<?= !empty($admin['foto'])
-                ? base_url('uploads/foto_admin/' . $admin['foto']) . '?t=' . time()
-                : base_url('uploads/default.png') ?>"
-        alt="Foto Profil">
-      <p class="foto-change-text">Klik Untuk Mengganti Foto</p>
-    </div>
 
     <!-- INFO AKUN -->
     <div class="profile-details">
@@ -61,34 +49,7 @@
   </div>
 </div>
 
-<!-- MODAL FOTO -->
-<div id="modal" class="modal">
-  <div class="modal-content">
-    <h3>Ubah Foto Profil</h3>
 
-    <!-- Upload File -->
-    <input type="file" id="fileInput" accept="image/*">
-
-    <div class="crop-container">
-      <img id="cropImage" class="hidden" />
-    </div>
-
-    <!-- Kamera -->
-    <div class="camera-section">
-      <button type="button" onclick="openCamera()" class="btn-camera">📷 Buka Kamera</button>
-      <div id="cameraWrapper" class="hidden">
-        <video id="camera" autoplay playsinline class="camera-preview"></video>
-        <button type="button" onclick="takeSnapshot()" class="btn-capture">📸 Ambil Foto</button>
-        <canvas id="snapshot" class="hidden"></canvas>
-      </div>
-    </div>
-
-    <div class="modal-actions">
-      <button type="button" onclick="submitFoto()" class="btn-save">Simpan</button>
-      <button type="button" onclick="window.closeModal()" class="btn-cancel">Batal</button>
-    </div>
-  </div>
-</div>
 
 <div id="toast" class="toast"></div>
 

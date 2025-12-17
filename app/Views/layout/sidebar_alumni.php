@@ -63,27 +63,33 @@ $settings = $siteSettingModel->getSettings();
     </nav>
   </div>
 
-  <!-- Profil + Logout -->
-  <div class="mt-6 border-t pt-4">
-    <div id="profileSidebarBtn" class="flex items-center gap-3 mb-3 cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition relative">
-      <img id="sidebarFoto" src="<?= $fotoUrl ?>" class="profile-img object-cover shadow-md">
-      <div>
-        <p class="font-semibold text-gray-800 text-sm"><?= $session->get('nama_lengkap') ?? $session->get('username') ?></p>
-        <p class="text-gray-500 text-xs"><?= $session->get('email') ?></p>
-      </div>
-    </div>
+ <!-- ===== Profil + Logout (Alumni) ===== -->
+<div class="mt-6 border-t pt-4">
 
-    <form action="<?= base_url('logout') ?>" method="get">
-  <button type="submit" 
-          class="logout-btn"
-          style="background-color: <?= esc($settings['dashboard_logout_button_color'] ?? '#dc2626') ?>;
-                 color: <?= esc($settings['dashboard_logout_button_text_color'] ?? '#ffffff') ?>;"
-          onmouseover="this.style.backgroundColor='<?= esc($settings['dashboard_logout_button_hover_color'] ?? '#b91c1c') ?>'"
-          onmouseout="this.style.backgroundColor='<?= esc($settings['dashboard_logout_button_color'] ?? '#dc2626') ?>'">
-      <?= esc($settings['dashboard_logout_button_text'] ?? 'Logout') ?>
-  </button>
-</form>
+  <!-- Nama & Email -->
+  <div class="mb-3 p-2 rounded-lg">
+    <p class="font-semibold text-gray-800 text-sm">
+      <?= esc($session->get('nama_lengkap') ?? $session->get('username')) ?>
+    </p>
+    <p class="text-gray-500 text-xs">
+      <?= esc($session->get('email')) ?>
+    </p>
   </div>
+
+  <!-- Logout -->
+  <form action="<?= base_url('logout') ?>" method="get">
+    <button type="submit"
+      class="logout-btn"
+      style="background-color: <?= esc($settings['dashboard_logout_button_color'] ?? '#dc2626') ?>;
+             color: <?= esc($settings['dashboard_logout_button_text_color'] ?? '#ffffff') ?>;"
+      onmouseover="this.style.backgroundColor='<?= esc($settings['dashboard_logout_button_hover_color'] ?? '#b91c1c') ?>'"
+      onmouseout="this.style.backgroundColor='<?= esc($settings['dashboard_logout_button_color'] ?? '#dc2626') ?>'">
+      <?= esc($settings['dashboard_logout_button_text'] ?? 'Logout') ?>
+    </button>
+  </form>
+
+</div>
+
 </aside>
 
 <!-- Modal Foto -->

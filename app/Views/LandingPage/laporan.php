@@ -183,17 +183,34 @@
               </div>
             <?php endif; ?>
 
-            <?php if (!empty($lap['file_pdf'])): ?>
-              <a href="<?= base_url('uploads/pdf/'.$lap['file_pdf']) ?>" target="_blank" class="btn btn-outline-primary btn-download">
-                Lihat PDF
-              </a>
-              <div class="pdf-container mt-3">
-                <embed src="<?= base_url('uploads/pdf/'.$lap['file_pdf']) ?>#toolbar=1&navpanes=0&scrollbar=1" 
-                       type="application/pdf" width="100%" height="600px">
-              </div>
-            <?php else: ?>
-              <p class="text-danger mt-3">Belum ada file laporan PDF yang diupload.</p>
-            <?php endif; ?>
+          <?php
+$pdfExists = !empty($lap['file_pdf']) 
+    && is_file(WRITEPATH . 'private/pdf/' . $lap['file_pdf']);
+?>
+
+<?php if ($pdfExists): ?>
+  <a href="<?= base_url('laporan/pdf/' . $lap['file_pdf']) ?>"
+     target="_blank"
+     class="btn btn-outline-primary btn-download">
+    Lihat PDF
+  </a>
+
+  <div class="pdf-container mt-3">
+   <iframe
+  src="<?= base_url('laporan/pdf/' . $lap['file_pdf']) ?>"
+  width="100%"
+  height="650px"
+  style="border:none;">
+</iframe>
+
+  </div>
+<?php else: ?>
+  <p class="text-muted mt-3 fst-italic">
+    File PDF tidak tersedia.
+  </p>
+<?php endif; ?>
+
+
           </div>
         </div>
       <?php 
